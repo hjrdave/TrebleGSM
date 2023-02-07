@@ -2,11 +2,11 @@
   "name": "@treblegsm/core",
   "version": "1.0.0",
   "description": "Global State Manager for JS Apps",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
-    "start": "babel --watch src --out-dir lib --extensions .ts,.tsx",
-    "build": "babel src --out-dir lib --extensions .ts,.tsx && tsc --emitDeclarationOnly",
+    "start": "babel --watch src --out-dir build --extensions .ts,.tsx",
+    "build": "babel src --out-dir build --extensions .ts,.tsx && tsc --emitDeclarationOnly",
     "tsc:watch": "tsc --watch --emitDeclarationOnly"
   },
   "files": [
