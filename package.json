@@ -1,0 +1,65 @@
+{
+  "name": "treble-gsm",
+  "version": "4.0.1",
+  "description": "Hook based React global state management",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "scripts": {
+    "start": "babel --watch src --out-dir lib --extensions .ts,.tsx",
+    "build": "babel src --out-dir lib --extensions .ts,.tsx && tsc --emitDeclarationOnly",
+    "tsc:watch": "tsc --watch --emitDeclarationOnly"
+  },
+  "files": [
+    "lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hjrdave/treble-gsm.git"
+  },
+  "keywords": [
+    "npm",
+    "module",
+    "node",
+    "javascript",
+    "typescript",
+    "react",
+    "react-hooks",
+    "global-state-management"
+  ],
+  "author": "David Sanders <dsanders@mediafish.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hjrdave/treble-gsm/issues"
+  },
+  "homepage": "https://github.com/hjrdave/treble-gsm#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-react": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
+    "@types/node": "^18.11.18",
+    "babel-plugin-add-module-exports": "^1.0.2",
+    "babel-plugin-minify-dead-code-elimination": "^0.5.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-minify": "^0.5.1",
+    "chai": "^4.1.2",
+    "cross-env": "^5.2.1",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0",
+    "mocha": "^6.1.3",
+    "nyc": "^13.3.0",
+    "rimraf": "^2.6.2",
+    "typescript": "^4.9.4",
+    "vsts": "^2.1.2"
+  },
+  "dependencies": {
+    "@types/events": "^3.0.0",
+    "events": "^3.3.0"
+  }
+}

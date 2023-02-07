@@ -1,0 +1,49 @@
+# Node.js with React
+# Build a Node.js project that uses React.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+# https://www.aaron-powell.com/posts/2019-02-18-releasing-to-npm-from-azure-devops/
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- task: Npm@1
+  inputs:
+    command: install # Options: install, publish, custom
+    publishPackageMetadata: true # Optional
+    customRegistry: useNpmrc
+    publishEndpoint: 'treble-gsm-package'
+  displayName: 'Install Dependencies'
+
+- task: Npm@1
+  inputs:
+    command: custom
+    customCommand: run build
+    publishPackageMetadata: true # Optional
+    publishEndpoint: 'treble-gsm-package'
+  displayName: 'Compile Source'
+
+- script: |
+    npm pack
+  displayName: 'Create npm package'
+
+- task: Npm@1
+  inputs:
+    command: publish
+    publishEndpoint: 'treble-gsm-package'
+  displayName: 'Create build artifact'
+
+    
+
+
+
+
