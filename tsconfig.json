@@ -9,7 +9,7 @@
     "module": "commonjs",
     "jsx": "react",
     "declaration": true,
-    "outDir": "./lib",
+    "outDir": "./build",
     "removeComments": true,
     "strict": true,
     "noImplicitAny": true,
