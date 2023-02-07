@@ -2,12 +2,11 @@
   "name": "@treblegsm/core",
   "version": "1.0.0",
   "description": "Global State Manager for JS Apps",
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
-    "start": "babel --watch src --out-dir build --extensions .ts,.tsx",
-    "build": "npm run prebuild && babel src --out-dir build --extensions .ts,.tsx && tsc --emitDeclarationOnly",
-    "prebuild": "copyfiles package.json LICENSE CONTRIBUTING.md build",
+    "start": "babel --watch src --out-dir lib --extensions .ts,.tsx",
+    "build": "babel src --out-dir lib --extensions .ts,.tsx && tsc --emitDeclarationOnly",
     "tsc:watch": "tsc --watch --emitDeclarationOnly"
   },
   "files": [
