@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm ci
+      - run: npm install
       - run: npm run build
 
   Publish:
@@ -31,7 +31,7 @@ jobs:
           node-version: 16
           registry-url: https://registry.npmjs.org/
       - name: Installing Packages
-        run: npm ci
+        run: npm install
       - name: Building Package
         run: npm run build
       - name: Publishing to NPM
