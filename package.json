@@ -1,7 +1,7 @@
 {
-  "name": "treble-gsm",
-  "version": "4.0.1",
-  "description": "Hook based React global state management",
+  "name": "@treblegsm/core",
+  "version": "1.0.0",
+  "description": "Global State Manager for JS Apps",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hjrdave/treble-gsm.git"
+    "url": "git+https://github.com/hjrdave/TrebleGSM.git"
   },
   "keywords": [
     "npm",
@@ -31,9 +31,9 @@
   "author": "David Sanders <dsanders@mediafish.io>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hjrdave/treble-gsm/issues"
+    "url": "https://github.com/hjrdave/TrebleGSM/issues"
   },
-  "homepage": "https://github.com/hjrdave/treble-gsm#readme",
+  "homepage": "https://github.com/hjrdave/TrebleGSM#readme",
   "devDependencies": {
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
