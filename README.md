@@ -9,6 +9,10 @@ This is going to replace package 'treble-gsm' (which is React only) in the near 
 
 This is the core package. Even though this can be used as a stand alone package, it was meant to provide a foundation for Framework specific packages.
 
+<div style="background-color: #fff3cd; border: 1px solid #ffeeba; padding: 1em;">
+  <strong>Warning:</strong> This library is still experimental and is not ready for production.
+</div>
+
 1. Create a new `Store`
 
 ```javascript
@@ -56,9 +60,15 @@ Store.getState('name') //key
 ```javascript
 
 Store.onDispatch((dispatchItem) => {
-    if (dispatchItem.key === key) {
+    if (dispatchItem.key === 'name') {
         console.log(dispatchItem.state)
     }
 });
+
+//initial console.log output
+//name: Ash Ketchum
+
+//new console.log output
+//name: Gary Oak
 
 ```
