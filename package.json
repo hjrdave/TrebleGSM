@@ -2,18 +2,19 @@
   "name": "@treblegsm/core",
   "version": "1.0.0",
   "description": "Global State Manager for JS Apps",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "scripts": {
     "start": "babel --watch src --out-dir build --extensions .ts,.tsx",
     "tsc:watch": "tsc --watch --emitDeclarationOnly",
     "build": "babel src --out-dir build --extensions .ts,.tsx && tsc --emitDeclarationOnly",
-    "prod:build": "copyfiles package.json LICENSE CONTRIBUTING.md build && npm run build"
+    "prod:build": "copyfiles package.json LICENSE CONTRIBUTING.md build && npm run build && cd build && npm pack"
   },
   "files": [
-    "lib",
+    "build",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CONTRIBUTING.md"
   ],
   "repository": {
     "type": "git",
