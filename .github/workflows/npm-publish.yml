@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm install --legacy-peer-deps
+      - run: npm ci
       - run: npm run build
 
   Publish:
@@ -31,10 +31,10 @@ jobs:
           node-version: 16
           registry-url: https://registry.npmjs.org/
       - name: Installing Packages
-        run: npm install --legacy-peer-deps
+        run: npm ci
       - name: Building Package
         run: npm run prod:build
       - name: Publishing to NPM
-        run: cd ./build && npm version ${{ env.VERSION }} --no-git-tag-version && npm publish --access public
+        run: cd ./build && npm version ${{ env.VERSION }} --no-git-tag-version && npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
