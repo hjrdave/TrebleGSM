@@ -35,6 +35,6 @@ jobs:
       - name: Building Package
         run: npm run prod:build
       - name: Publishing to NPM
-        run: npm version ${{ env.VERSION }} --no-git-tag-version && npm publish
+        run: cd ./build && npm version ${{ env.VERSION }} --no-git-tag-version && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
