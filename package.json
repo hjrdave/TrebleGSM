@@ -2,8 +2,8 @@
   "name": "@treblegsm/core",
   "version": "1.0.0",
   "description": "Global State Manager for JS Apps",
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "start": "babel --watch src --out-dir build --extensions .ts,.tsx",
     "tsc:watch": "tsc --watch --emitDeclarationOnly",
