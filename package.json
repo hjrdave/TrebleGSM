@@ -5,9 +5,10 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "start": "babel --watch src --out-dir lib --extensions .ts,.tsx",
-    "build": "babel src --out-dir lib --extensions .ts,.tsx && tsc --emitDeclarationOnly",
-    "tsc:watch": "tsc --watch --emitDeclarationOnly"
+    "start": "babel --watch src --out-dir build --extensions .ts,.tsx",
+    "tsc:watch": "tsc --watch --emitDeclarationOnly",
+    "build": "babel src --out-dir build --extensions .ts,.tsx && tsc --emitDeclarationOnly",
+    "prod:build": "copyfiles package.json LICENSE CONTRIBUTING.md build && npm run build"
   },
   "files": [
     "lib",
