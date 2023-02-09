@@ -1,7 +1,6 @@
 import { default as Emitter } from "events";
 import { Types } from "./TypeGaurd";
 import { Features } from "./Store";
-
 export interface DispatchItem {
     key: string,
     type?: Types,
