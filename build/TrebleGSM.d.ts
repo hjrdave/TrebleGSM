@@ -6,7 +6,7 @@ export declare class TrebleGSM<TKey = string> {
         key: TKey;
         state: any;
         type: import("./TypeGaurd").Types | undefined;
-        features: import("./Store").Features<any, TKey> | undefined;
+        features: import("./Features").default<any, TKey> | undefined;
     }[];
     addItem: <TState = any>(item: StoreItem<TState, TKey>) => void;
     setState: <TState = any>(key: TKey, value: TState) => void;

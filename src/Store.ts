@@ -4,11 +4,8 @@ import Inventory from "./Inventory";
 import Manager from "./Manager";
 import Middleware from "./Middleware";
 import Module from "./Module";
-export interface Features<TState = any, TKey = string> {
-    log?: (item: DispatchItem<TState, TKey>) => void;
-    check?: (item: DispatchItem<TState, TKey>) => boolean;
-    process?: (item: DispatchItem<TState, TKey>) => DispatchItem<TState, TKey>;
-}
+import Features from "./Features";
+
 export interface StoreItem<TState = any, TKey = string> {
     key: TKey;
     state?: TState;

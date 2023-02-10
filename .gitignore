@@ -33,8 +33,8 @@ jspm_packages
 # Editors
 .idea
 
-# Lib
-lib
+# build
+build
 
 # npm package lock
 package-lock.json

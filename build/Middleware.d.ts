@@ -19,7 +19,7 @@ export default class Middleware<TState = any, TKey = string> {
             dispatchState?: TState | undefined;
             currentState?: TState | undefined;
             state?: TState | undefined;
-            features?: import("./Store").Features<TState, TKey> | undefined;
+            features?: import("./Features").default<TState, TKey> | undefined;
             modules?: [any, any][] | undefined;
         };
     };

@@ -1,6 +1,6 @@
 import { default as Emitter } from "events";
 import { Types } from "./TypeGaurd";
-import { Features } from "./Store";
+import Features from "./Features";
 export interface DispatchItem<TState = any, TKey = string> {
     key: TKey,
     type?: Types,
