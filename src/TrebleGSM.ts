@@ -6,6 +6,7 @@ import { default as StoreManager, StoreItem } from "./Store";
 import { DispatchItem } from "./Dispatcher";
 //import Module, { ModuleItem } from "./Module";
 
+
 export class TrebleGSM<TKey = string> {
 
     //Holds Store state, features, and CRUD methods
