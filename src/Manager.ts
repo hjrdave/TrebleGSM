@@ -1,10 +1,10 @@
 import Inventory from "./Inventory";
 
-export default class Manager<T> {
+export default class Manager<TItem = any, TKey = string> {
 
-    private inventory: Inventory<T>;
+    private inventory: Inventory<TItem, TKey>;
 
-    get = (key: string) => {
+    get = (key: TKey) => {
         if (this.inventory.has(key)) {
             return this.inventory.get(key);
         }
@@ -12,7 +12,7 @@ export default class Manager<T> {
         return undefined;
     }
 
-    add = (key: string, value: any) => {
+    add = <TItem = any>(key: TKey, value: TItem) => {
         if (!this.inventory.has(key)) {
             this.inventory.set(key, value);
         } else {
@@ -20,7 +20,7 @@ export default class Manager<T> {
         }
     }
 
-    update = (key: string, value: any) => {
+    update = <TItem = any>(key: TKey, value: TItem) => {
         if (this.inventory.has(key)) {
             this.inventory.set(key, value);
         } else {
@@ -28,7 +28,7 @@ export default class Manager<T> {
         }
     }
 
-    remove = (key: string) => {
+    remove = (key: TKey) => {
         return this.inventory.delete(key);
     }
 
@@ -37,18 +37,18 @@ export default class Manager<T> {
     }
 
     getItems = () => {
-        return Array.from(this.inventory);
+        return Array.from(this.inventory) as [TKey, TItem][];
     }
 
-    has = (key: string) => {
+    has = (key: TKey) => {
         return this.inventory.has(key);
     }
 
-    forEach = (predicateFN: (value: any, key: string) => void) => {
+    forEach = (predicateFN: (value: TItem, key: TKey) => void) => {
         this.inventory.forEach(predicateFN);
     }
 
-    public constructor(inventory: Inventory<T>) {
+    public constructor(inventory: Inventory<TItem, TKey>) {
         this.inventory = inventory;
     }
 };

@@ -4,29 +4,27 @@ import Inventory from "./Inventory";
 import Manager from "./Manager";
 import Middleware from "./Middleware";
 import Module from "./Module";
-export interface Features {
-    persist?: boolean;
-    log?: (item: DispatchItem) => void;
-    check?: (item: DispatchItem) => boolean;
-    process?: (item: DispatchItem) => DispatchItem;
-    callback?: (item: DispatchItem) => void;
+export interface Features<TState = any, TKey = string> {
+    log?: (item: DispatchItem<TState, TKey>) => void;
+    check?: (item: DispatchItem<TState, TKey>) => boolean;
+    process?: (item: DispatchItem<TState, TKey>) => DispatchItem<TState, TKey>;
 }
-export interface StoreItem {
-    key: string;
-    state: any;
+export interface StoreItem<TState = any, TKey = string> {
+    key: TKey;
+    state?: TState;
     type?: Types;
-    features: Features
+    features?: Features<TState, TKey>;
 }
-export default class Store {
+export default class Store<TKey = string> {
 
     //Managers
-    private stateManager: Manager<any>;
-    private typeManager: Manager<Types>;
-    private featureManager: Manager<Features>;
-    private moduleManager: Manager<Module>;
+    private stateManager: Manager<any, TKey>;
+    private typeManager: Manager<Types, TKey>;
+    private featureManager: Manager<Features<any, TKey>, TKey>;
+    private moduleManager: Manager;
 
     //Dispatcher
-    private dispatcher: Dispatcher;
+    private dispatcher: Dispatcher<any, TKey>;
 
     newModule = (module: Module) => {
         const name = module.getName();
@@ -54,8 +52,8 @@ export default class Store {
             features: this.featureManager.get(item[0])
         }));
     }
-    new = ({ key, state, type, features }: StoreItem) => {
-        const middleware = new Middleware({ key: key });
+    new = <TState = any>({ key, state, type, features }: StoreItem<TState, TKey>) => {
+        const middleware = new Middleware<TState, TKey>({ key: key });
         if (middleware.doesTypePass(state, type)) {
             this.stateManager.add(key, state);
             this.typeManager.add(key, type);
@@ -64,7 +62,7 @@ export default class Store {
             console.error(`TrebleGSM: Initial State "${key}" must be of type "${type}".`);
         }
     }
-    get = (key: string) => {
+    get = (key: TKey) => {
         if (this.stateManager.has(key)) {
             const type = this.typeManager.get(key);
             const state = this.stateManager.get(key);
@@ -77,12 +75,13 @@ export default class Store {
             }
             return storeItem
         } else {
+            console.error(`TrebleGSM: State "${key}" does not exist.`);
             return undefined
         }
     }
-    set = (key: string, state: any) => {
+    set = <TState = any>(key: TKey, state: TState) => {
         if (this.stateManager.has(key)) {
-            const middleware = new Middleware({
+            const middleware = new Middleware<TState, TKey>({
                 key: key,
                 type: this.typeManager.get(key),
                 currentState: this.get(key)?.state,
@@ -99,7 +98,7 @@ export default class Store {
             console.error(`TrebleGSM: State "${key}" does not exist.`);
         }
     }
-    onDispatch = (callbackfn: (item: DispatchItem) => void) => {
+    onDispatch = (callbackfn: (item: DispatchItem<any, TKey>) => void) => {
         this.stateManager.forEach((value, key) => this.dispatcher.stopListening(key));
         this.stateManager.forEach((value, key) => this.dispatcher.listen(key, callbackfn));
     }

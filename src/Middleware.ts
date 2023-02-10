@@ -1,9 +1,9 @@
 import TypeGuard, { Types } from "./TypeGaurd";
 import { DispatchItem } from "./Dispatcher";
 import RenderGuard from "./RenderGaurd";
-export default class Middleware {
+export default class Middleware<TState = any, TKey = string>{
 
-    private dispatchItem: DispatchItem;
+    private dispatchItem: DispatchItem<TState, TKey>;
 
     getDispatchItem = () => {
         return this.dispatchItem;
@@ -41,27 +41,33 @@ export default class Middleware {
             //Makes sure the dispatch state is not the current state
             const doesRenderPass = this.doesRenderPass(dispatchItem.currentState, dispatchItem.dispatchState, type);
             if (doesRenderPass) {
+                const log = features?.log;
                 //runs log middleware fn
-                if (features?.log) {
-                    features.log(dispatchItem);
+                if (log) {
+                    log(dispatchItem);
                 }
 
+                const didCheckPass = (features?.check) ? features.check(dispatchItem) : true;
+
+                const process = features?.process;
+
+
                 //runs check middleware fn
-                if (features?.check && features?.check(dispatchItem)) {
+                if (didCheckPass) {
 
                     //runs process middleware fn
-                    if (features.process) {
+                    if (process) {
                         return {
                             doesPass: true,
                             dispatchItem: {
                                 ...dispatchItem,
-                                processedState: features.process(dispatchItem)
+                                processedState: process(dispatchItem)
                             }
                         }
                     }
                     return { ...pipelineItem, doesPass: true }
                 } else {
-                    return { ...pipelineItem, doesPass: true }
+                    return { ...pipelineItem, doesPass: false }
                 }
             } else {
                 return pipelineItem;
@@ -73,7 +79,7 @@ export default class Middleware {
         }
     }
 
-    public constructor(dispatchItem: DispatchItem) {
+    public constructor(dispatchItem: DispatchItem<TState, TKey>) {
         this.dispatchItem = dispatchItem;
     }
 };

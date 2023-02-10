@@ -17,7 +17,7 @@ export default class TypeGuard {
     }
 
     public static isObject = (value: any) => {
-        return typeof value === 'object' && value !== null;
+        return typeof value === 'object' && value !== null && !Array.isArray(value);
     }
 
     public static isArray = (value: any) => {

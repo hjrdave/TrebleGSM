@@ -1,4 +1,4 @@
-export default class Inventory<T> extends Map {
-    set(key: string | symbol, value: any): this;
-    get(key: string | symbol): T;
+export default class Inventory<TItem = any, TKey = string> extends Map {
+    set<TItem = any>(key: TKey, value: TItem): this;
+    get(key: TKey): TItem;
 }

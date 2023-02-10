@@ -1,16 +1,16 @@
 import { DispatchItem } from "./Dispatcher";
-export interface IModule {
+export interface ModuleItem<TState = any> {
     name: string;
     extendStore?: any[];
     featureKeys?: string[];
-    log?: (item: DispatchItem) => void;
-    check?: (item: DispatchItem) => boolean;
-    process?: (item: DispatchItem) => DispatchItem;
-    callback?: (item: DispatchItem) => void;
+    log?: (item: DispatchItem<TState>) => void;
+    check?: (item: DispatchItem<TState>) => boolean;
+    process?: (item: DispatchItem<TState>) => DispatchItem<TState>;
+    callback?: (item: DispatchItem<TState>) => void;
     typeGaurds?: string[][];
     renderGaurd?: string[][];
 }
-export default class Module {
+export default class Module<TState = any> {
     private name;
     private extendStore?;
     private featureKeys?;
@@ -20,6 +20,6 @@ export default class Module {
     private typeGuard?;
     private renderGaurd?;
     getName: () => string;
-    getData: () => IModule;
-    constructor(props: IModule);
+    getData: () => ModuleItem<TState>;
+    constructor(props: ModuleItem<TState>);
 }

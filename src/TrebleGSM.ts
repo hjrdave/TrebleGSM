@@ -3,13 +3,13 @@
  * */
 //import './TrebleGSM';
 import { default as StoreManager, StoreItem } from "./Store";
-import { DispatchItem as IDispatchItem } from "./Dispatcher";
-import Module, { IModule } from "./Module";
+import { DispatchItem } from "./Dispatcher";
+//import Module, { ModuleItem } from "./Module";
 
-export class TrebleGSM {
+export class TrebleGSM<TKey = string> {
 
     //Holds Store state, features, and CRUD methods
-    private store: StoreManager;
+    private store: StoreManager<TKey>;
 
     //Returns a current snapshot of the Store
     getItems = () => {
@@ -17,35 +17,35 @@ export class TrebleGSM {
     }
 
     //Adds new item with initial state to Store
-    addItem = (item: StoreItem) => {
+    addItem = <TState = any>(item: StoreItem<TState, TKey>) => {
         this.store.new(item);
     }
 
     //Set individual state by key
-    setState = <T = any>(key: string, value: T) => {
+    setState = <TState = any>(key: TKey, value: TState) => {
         this.store.set(key, value);
     }
 
     //Get individual state by key
-    getState = <T = any>(key: string) => {
-        return this.store.get(key)?.state as T;
+    getState = <TState = any>(key: TKey) => {
+        return this.store.get(key)?.state as TState;
     }
 
     //Listens to state changes and then fires callback everytime a state changes
-    onDispatch = (callbackfn: (item: IDispatchItem) => void) => {
+    onDispatch = (callbackfn: (item: DispatchItem<any, TKey>) => void) => {
         this.store.onDispatch(callbackfn);
     }
 
     //Used by 3rd party libraies to create a new Module
-    static newModule = (moduleData: IModule) => {
-        const newModule = new Module(moduleData);
-        return newModule;
-    }
+    // static newModule = <TState = any>(moduleData: ModuleItem<TState>) => {
+    //     const newModule = new Module(moduleData);
+    //     return newModule;
+    // }
 
     //Allows Store to use external Module to extend itself
-    use = (module: Module) => {
-        this.store.newModule(module);
-    }
+    // use = (module: Module) => {
+    //     this.store.newModule(module);
+    // }
 
     public constructor() {
         this.store = new StoreManager()

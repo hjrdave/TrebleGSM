@@ -5,7 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = exports.TrebleGSM = void 0;
 var _Store = _interopRequireDefault(require("./Store"));
-var _Module = _interopRequireDefault(require("./Module"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -33,16 +32,9 @@ var TrebleGSM = _createClass(function TrebleGSM() {
   _defineProperty(this, "onDispatch", function (callbackfn) {
     _this.store.onDispatch(callbackfn);
   });
-  _defineProperty(this, "use", function (module) {
-    _this.store.newModule(module);
-  });
   this.store = new _Store["default"]();
 });
 exports.TrebleGSM = TrebleGSM;
-_defineProperty(TrebleGSM, "newModule", function (moduleData) {
-  var newModule = new _Module["default"](moduleData);
-  return newModule;
-});
 ;
 var _default = TrebleGSM;
 exports["default"] = _default;

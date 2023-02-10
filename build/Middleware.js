@@ -47,15 +47,18 @@ var Middleware = _createClass(function Middleware(_dispatchItem) {
     if (doesTypePass) {
       var doesRenderPass = _this.doesRenderPass(dispatchItem.currentState, dispatchItem.dispatchState, type);
       if (doesRenderPass) {
-        if (features !== null && features !== void 0 && features.log) {
-          features.log(dispatchItem);
+        var log = features === null || features === void 0 ? void 0 : features.log;
+        if (log) {
+          log(dispatchItem);
         }
-        if (features !== null && features !== void 0 && features.check && features !== null && features !== void 0 && features.check(dispatchItem)) {
-          if (features.process) {
+        var didCheckPass = features !== null && features !== void 0 && features.check ? features.check(dispatchItem) : true;
+        var process = features === null || features === void 0 ? void 0 : features.process;
+        if (didCheckPass) {
+          if (process) {
             return {
               doesPass: true,
               dispatchItem: _objectSpread(_objectSpread({}, dispatchItem), {}, {
-                processedState: features.process(dispatchItem)
+                processedState: process(dispatchItem)
               })
             };
           }
@@ -64,7 +67,7 @@ var Middleware = _createClass(function Middleware(_dispatchItem) {
           });
         } else {
           return _objectSpread(_objectSpread({}, pipelineItem), {}, {
-            doesPass: true
+            doesPass: false
           });
         }
       } else {

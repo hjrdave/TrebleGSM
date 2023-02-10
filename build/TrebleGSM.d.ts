@@ -1,20 +1,17 @@
 import { StoreItem } from "./Store";
-import { DispatchItem as IDispatchItem } from "./Dispatcher";
-import Module, { IModule } from "./Module";
-export declare class TrebleGSM {
+import { DispatchItem } from "./Dispatcher";
+export declare class TrebleGSM<TKey = string> {
     private store;
     getItems: () => {
-        key: any;
+        key: TKey;
         state: any;
         type: import("./TypeGaurd").Types | undefined;
-        features: import("./Store").Features | undefined;
+        features: import("./Store").Features<any, TKey> | undefined;
     }[];
-    addItem: (item: StoreItem) => void;
-    setState: <T = any>(key: string, value: T) => void;
-    getState: <T = any>(key: string) => T;
-    onDispatch: (callbackfn: (item: IDispatchItem) => void) => void;
-    static newModule: (moduleData: IModule) => Module;
-    use: (module: Module) => void;
+    addItem: <TState = any>(item: StoreItem<TState, TKey>) => void;
+    setState: <TState = any>(key: TKey, value: TState) => void;
+    getState: <TState = any>(key: TKey) => TState;
+    onDispatch: (callbackfn: (item: DispatchItem<any, TKey>) => void) => void;
     constructor();
 }
 export default TrebleGSM;

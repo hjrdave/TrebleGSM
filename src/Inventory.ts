@@ -1,9 +1,9 @@
-export default class Inventory<T> extends Map {
-    set(key: string | symbol, value: any) {
+export default class Inventory<TItem = any, TKey = string> extends Map {
+    set<TItem = any>(key: TKey, value: TItem) {
         return super.set(key, value);
     }
-    get(key: string | symbol) {
-        return super.get(key) as T;
+    get(key: TKey) {
+        return super.get(key) as TItem;
     }
 }
 

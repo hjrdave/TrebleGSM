@@ -1,31 +1,33 @@
 import { default as Emitter } from "events";
 import { Types } from "./TypeGaurd";
 import { Features } from "./Store";
-export interface DispatchItem {
-    key: string,
+export interface DispatchItem<TState = any, TKey = string> {
+    key: TKey,
     type?: Types,
-    dispatchState?: any;
-    currentState?: any;
-    state?: any;
-    features?: Features;
+    dispatchState?: TState;
+    currentState?: TState;
+    state?: TState;
+    features?: Features<TState, TKey>;
     modules?: [any, any][];
 }
-export default class Dispatcher {
+export default class Dispatcher<TState = any, TKey = string> {
 
     private EventEmitter: Emitter;
-    private dispatchItem?: DispatchItem;
+    private dispatchItem?: DispatchItem<TState, TKey>;
 
-    listen = (key: any, callbackfn: (item: DispatchItem) => void) => {
-        this.EventEmitter.on(key, () => {
-            callbackfn(this.dispatchItem as any)
+    listen = (key: TKey, callbackfn: (item: DispatchItem<TState, TKey>) => void) => {
+        this.EventEmitter.on(key as string, () => {
+            if (this.dispatchItem) {
+                callbackfn(this.dispatchItem)
+            }
         });
     }
-    stopListening = (key: string) => {
-        this.EventEmitter.removeListener(key, () => null);
+    stopListening = (key: TKey) => {
+        this.EventEmitter.removeListener(key as string, () => null);
     }
-    dispatch = (item: DispatchItem) => {
+    dispatch = (item: DispatchItem<TState, TKey>) => {
         this.dispatchItem = item;
-        this.EventEmitter.emit(item.key);
+        this.EventEmitter.emit(item.key as string);
     }
 
     public constructor() {

@@ -74,6 +74,7 @@ var Store = _createClass(function Store() {
       };
       return storeItem;
     } else {
+      console.error("TrebleGSM: State \"".concat(key, "\" does not exist."));
       return undefined;
     }
   });

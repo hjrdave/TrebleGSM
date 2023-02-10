@@ -25,7 +25,7 @@ _defineProperty(TypeGuard, "isBoolean", function (value) {
   return typeof value === 'boolean';
 });
 _defineProperty(TypeGuard, "isObject", function (value) {
-  return _typeof(value) === 'object' && value !== null;
+  return _typeof(value) === 'object' && value !== null && !Array.isArray(value);
 });
 _defineProperty(TypeGuard, "isArray", function (value) {
   return Array.isArray(value);

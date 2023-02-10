@@ -1,19 +1,19 @@
 import { Types } from "./TypeGaurd";
 import { Features } from "./Store";
-export interface DispatchItem {
-    key: string;
+export interface DispatchItem<TState = any, TKey = string> {
+    key: TKey;
     type?: Types;
-    dispatchState?: any;
-    currentState?: any;
-    state?: any;
-    features?: Features;
+    dispatchState?: TState;
+    currentState?: TState;
+    state?: TState;
+    features?: Features<TState, TKey>;
     modules?: [any, any][];
 }
-export default class Dispatcher {
+export default class Dispatcher<TState = any, TKey = string> {
     private EventEmitter;
     private dispatchItem?;
-    listen: (key: any, callbackfn: (item: DispatchItem) => void) => void;
-    stopListening: (key: string) => void;
-    dispatch: (item: DispatchItem) => void;
+    listen: (key: TKey, callbackfn: (item: DispatchItem<TState, TKey>) => void) => void;
+    stopListening: (key: TKey) => void;
+    dispatch: (item: DispatchItem<TState, TKey>) => void;
     constructor();
 }

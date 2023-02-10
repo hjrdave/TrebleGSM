@@ -18,7 +18,9 @@ var Dispatcher = _createClass(function Dispatcher() {
   _classCallCheck(this, Dispatcher);
   _defineProperty(this, "listen", function (key, callbackfn) {
     _this.EventEmitter.on(key, function () {
-      callbackfn(_this.dispatchItem);
+      if (_this.dispatchItem) {
+        callbackfn(_this.dispatchItem);
+      }
     });
   });
   _defineProperty(this, "stopListening", function (key) {
