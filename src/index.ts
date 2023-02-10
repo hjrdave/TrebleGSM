@@ -1,17 +1,15 @@
 import { default as StoreInstance } from "./TrebleGSM";
 import { Types as TTypes } from "./TypeGaurd";
 import { DispatchItem as IDispatchItem } from "./Dispatcher";
-import { ModuleItem as IModuleItem } from "./Module";
 import { Features as IFeatures, StoreItem as IStoreItem } from "./Store";
 namespace TrebleGSM {
 
-    export function Store() {
-        return new StoreInstance();
+    export function Store<TKey = string>() {
+        return new StoreInstance<TKey>();
     }
-    export interface StoreItem<TState = any> extends IStoreItem<TState> { };
-    export interface DispatchItem<TState = any> extends IDispatchItem<TState> { };
-    export interface ModuleItem<TState = any> extends IModuleItem<TState> { };
-    export interface Features<TState = any> extends IFeatures<TState> { };
+    export interface StoreItem<TState = any, TKey = string> extends IStoreItem<TState, TKey> { };
+    export interface DispatchItem<TState = any, TKey = string> extends IDispatchItem<TState, TKey> { };
+    export interface Features<TState = any, TKey = string> extends IFeatures<TState, TKey> { };
     export type StateTypes = TTypes;
 
 }
