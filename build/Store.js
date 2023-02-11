@@ -57,6 +57,15 @@ var Store = _createClass(function Store() {
       _this.stateManager.add(key, state);
       _this.typeManager.add(key, type);
       _this.featureManager.add(key, features);
+      if (features !== null && features !== void 0 && features.onLoad) {
+        var setState = _this.stateManager.update;
+        features.onLoad({
+          key: key,
+          state: state,
+          type: type,
+          features: features
+        }, setState);
+      }
     } else {
       console.error("TrebleGSM: Initial State \"".concat(key, "\" must be of type \"").concat(type, "\"."));
     }

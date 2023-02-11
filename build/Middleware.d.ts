@@ -10,18 +10,6 @@ export default class Middleware<TState = any, TKey = string> {
     runPipeline: () => {
         doesPass: boolean;
         dispatchItem: DispatchItem<TState, TKey>;
-    } | {
-        doesPass: boolean;
-        dispatchItem: {
-            processedState: DispatchItem<TState, TKey>;
-            key: TKey;
-            type?: Types | undefined;
-            dispatchState?: TState | undefined;
-            currentState?: TState | undefined;
-            state?: TState | undefined;
-            features?: import("./Features").default<TState, TKey> | undefined;
-            modules?: [any, any][] | undefined;
-        };
     };
     constructor(dispatchItem: DispatchItem<TState, TKey>);
 }

@@ -32,10 +32,7 @@ export default class Middleware<TState = any, TKey = string>{
         const type = dispatchItem.type;
         const features = dispatchItem.features;
         const doesTypePass = this.doesTypePass(dispatchState, type);
-        let pipelineItem = {
-            doesPass: false,
-            dispatchItem: this.dispatchItem,
-        };
+        let pipelineItem: { doesPass: boolean, dispatchItem: DispatchItem<TState, TKey> } = { doesPass: true, dispatchItem: dispatchItem };
         //makes sure state is accepted type
         if (doesTypePass) {
             //Makes sure the dispatch state is not the current state
@@ -48,22 +45,23 @@ export default class Middleware<TState = any, TKey = string>{
                 }
 
                 const didCheckPass = (features?.check) ? features.check(dispatchItem) : true;
-
                 const process = features?.process;
-
+                const callback = features?.callback;
 
                 //runs check middleware fn
                 if (didCheckPass) {
-
                     //runs process middleware fn
                     if (process) {
-                        return {
+                        pipelineItem = {
                             doesPass: true,
                             dispatchItem: {
                                 ...dispatchItem,
-                                processedState: process(dispatchItem)
+                                state: process(dispatchItem) as any
                             }
                         }
+                    }
+                    if (callback) {
+                        callback(pipelineItem.dispatchItem)
                     }
                     return { ...pipelineItem, doesPass: true }
                 } else {

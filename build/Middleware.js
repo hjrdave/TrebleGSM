@@ -41,8 +41,8 @@ var Middleware = _createClass(function Middleware(_dispatchItem) {
     var features = dispatchItem.features;
     var doesTypePass = _this.doesTypePass(dispatchState, type);
     var pipelineItem = {
-      doesPass: false,
-      dispatchItem: _this.dispatchItem
+      doesPass: true,
+      dispatchItem: dispatchItem
     };
     if (doesTypePass) {
       var doesRenderPass = _this.doesRenderPass(dispatchItem.currentState, dispatchItem.dispatchState, type);
@@ -53,14 +53,18 @@ var Middleware = _createClass(function Middleware(_dispatchItem) {
         }
         var didCheckPass = features !== null && features !== void 0 && features.check ? features.check(dispatchItem) : true;
         var process = features === null || features === void 0 ? void 0 : features.process;
+        var callback = features === null || features === void 0 ? void 0 : features.callback;
         if (didCheckPass) {
           if (process) {
-            return {
+            pipelineItem = {
               doesPass: true,
               dispatchItem: _objectSpread(_objectSpread({}, dispatchItem), {}, {
-                processedState: process(dispatchItem)
+                state: process(dispatchItem)
               })
             };
+          }
+          if (callback) {
+            callback(pipelineItem.dispatchItem);
           }
           return _objectSpread(_objectSpread({}, pipelineItem), {}, {
             doesPass: true

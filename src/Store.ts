@@ -6,7 +6,6 @@ import Middleware from "./Middleware";
 import Module from "./Module";
 import Features from "./Features";
 
-type SetStateAction<TState = any> = TState | ((prevState: TState) => TState);
 export interface StoreItem<TState = any, TKey = string> {
     key: TKey;
     state?: TState;
@@ -56,6 +55,10 @@ export default class Store<TKey = string> {
             this.stateManager.add(key, state);
             this.typeManager.add(key, type);
             this.featureManager.add(key, features);
+            if (features?.onLoad) {
+                const setState = this.stateManager.update;
+                features.onLoad({ key, state, type, features }, setState);
+            }
         } else {
             console.error(`TrebleGSM: Initial State "${key}" must be of type "${type}".`);
         }
