@@ -81,12 +81,14 @@ var Store = _createClass(function Store() {
   _defineProperty(this, "set", function (key, state) {
     if (_this.stateManager.has(key)) {
       var _this$get;
+      var currentState = (_this$get = _this.get(key)) === null || _this$get === void 0 ? void 0 : _this$get.state;
+      var dispatchState = typeof state === 'function' ? state(currentState) : state;
       var middleware = new _Middleware["default"]({
         key: key,
         type: _this.typeManager.get(key),
-        currentState: (_this$get = _this.get(key)) === null || _this$get === void 0 ? void 0 : _this$get.state,
-        dispatchState: state,
-        state: state,
+        currentState: currentState,
+        dispatchState: dispatchState,
+        state: dispatchState,
         features: _this.featureManager.get(key),
         modules: _this.moduleManager.getItems()
       });

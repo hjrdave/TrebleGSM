@@ -23,8 +23,8 @@ export class TrebleGSM<TKey = string> {
     }
 
     //Set individual state by key
-    setState = <TState = any>(key: TKey, value: TState) => {
-        this.store.set(key, value);
+    setState = <TState = any>(key: TKey, value: TState | ((prevState: TState) => TState)) => {
+        this.store.set<TState>(key, value);
     }
 
     //Get individual state by key

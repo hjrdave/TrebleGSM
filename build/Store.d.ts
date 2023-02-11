@@ -29,7 +29,7 @@ export default class Store<TKey = string> {
         state: any;
         features: Features<any, TKey> | undefined;
     } | undefined;
-    set: <TState = any>(key: TKey, state: TState) => void;
+    set: <TState = any>(key: TKey, state: TState | ((prevState: TState) => TState)) => void;
     onDispatch: (callbackfn: (item: DispatchItem<any, TKey>) => void) => void;
     constructor();
 }

@@ -6,6 +6,7 @@ import Middleware from "./Middleware";
 import Module from "./Module";
 import Features from "./Features";
 
+type SetStateAction<TState = any> = TState | ((prevState: TState) => TState);
 export interface StoreItem<TState = any, TKey = string> {
     key: TKey;
     state?: TState;
@@ -76,14 +77,18 @@ export default class Store<TKey = string> {
             return undefined
         }
     }
-    set = <TState = any>(key: TKey, state: TState) => {
+
+    set = <TState = any>(key: TKey, state: TState | ((prevState: TState) => TState)) => {
         if (this.stateManager.has(key)) {
+            const currentState = this.get(key)?.state as TState;
+            // @ts-ignore
+            const dispatchState = (typeof state === 'function') ? state(currentState) : state;
             const middleware = new Middleware<TState, TKey>({
                 key: key,
                 type: this.typeManager.get(key),
-                currentState: this.get(key)?.state,
-                dispatchState: state,
-                state: state,
+                currentState: currentState,
+                dispatchState: dispatchState,
+                state: dispatchState,
                 features: this.featureManager.get(key),
                 modules: this.moduleManager.getItems()
             });
