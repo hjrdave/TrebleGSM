@@ -13,8 +13,8 @@ export type FeatureOnCallback<TState = any, TKey = string> = (item: DispatchItem
 
 export default interface Features<TState = any, TKey = string> {
     onLoad?: FeatureOnLoad<TState, TKey>;
-    log?: FeatureOnLog<TState, TKey>;
-    check?: FeatureOnCheck<TState, TKey>;
-    process?: FeatureOnProcess<TState, TKey>;
-    callback?: FeatureOnCallback<TState, TKey>;
+    onLog?: FeatureOnLog<TState, TKey>;
+    onCheck?: FeatureOnCheck<TState, TKey>;
+    onProcess?: FeatureOnProcess<TState, TKey>;
+    onCallback?: FeatureOnCallback<TState, TKey>;
 }

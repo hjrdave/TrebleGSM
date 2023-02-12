@@ -71,33 +71,31 @@ var Store = _createClass(function Store() {
     }
   });
   _defineProperty(this, "get", function (key) {
-    if (_this.stateManager.has(key)) {
-      var type = _this.typeManager.get(key);
-      var state = _this.stateManager.get(key);
-      var features = _this.featureManager.get(key);
-      var storeItem = {
-        type: type,
-        key: key,
-        state: state,
-        features: features
-      };
-      return storeItem;
-    } else {
+    if (!_this.stateManager.has(key)) {
       console.error("TrebleGSM: State \"".concat(key, "\" does not exist."));
       return undefined;
     }
+    var type = _this.typeManager.get(key);
+    var state = _this.stateManager.get(key);
+    var features = _this.featureManager.get(key);
+    return {
+      type: type,
+      key: key,
+      state: state,
+      features: features
+    };
   });
   _defineProperty(this, "set", function (key, state) {
     if (_this.stateManager.has(key)) {
       var _this$get;
       var currentState = (_this$get = _this.get(key)) === null || _this$get === void 0 ? void 0 : _this$get.state;
-      var dispatchState = typeof state === 'function' ? state(currentState) : state;
+      var nextState = typeof state === 'function' ? state(currentState) : state;
       var middleware = new _Middleware["default"]({
         key: key,
         type: _this.typeManager.get(key),
         currentState: currentState,
-        dispatchState: dispatchState,
-        state: dispatchState,
+        dispatchState: nextState,
+        state: nextState,
         features: _this.featureManager.get(key),
         modules: _this.moduleManager.getItems()
       });

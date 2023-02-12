@@ -64,37 +64,34 @@ export default class Store<TKey = string> {
         }
     }
     get = (key: TKey) => {
-        if (this.stateManager.has(key)) {
-            const type = this.typeManager.get(key);
-            const state = this.stateManager.get(key);
-            const features = this.featureManager.get(key);
-            const storeItem = {
-                type: type,
-                key: key,
-                state: state,
-                features: features
-            }
-            return storeItem
-        } else {
+        if (!this.stateManager.has(key)) {
             console.error(`TrebleGSM: State "${key}" does not exist.`);
-            return undefined
+            return undefined;
         }
-    }
+
+        const type = this.typeManager.get(key);
+        const state = this.stateManager.get(key);
+        const features = this.featureManager.get(key);
+
+        return { type, key, state, features };
+    };
 
     set = <TState = any>(key: TKey, state: TState | ((prevState: TState) => TState)) => {
         if (this.stateManager.has(key)) {
             const currentState = this.get(key)?.state as TState;
-            // @ts-ignore
-            const dispatchState = (typeof state === 'function') ? state(currentState) : state;
+            const nextState = (typeof state === 'function')
+                ? (state as ((prevState: TState) => TState))(currentState)
+                : state as TState;
             const middleware = new Middleware<TState, TKey>({
                 key: key,
                 type: this.typeManager.get(key),
-                currentState: currentState,
-                dispatchState: dispatchState,
-                state: dispatchState,
+                currentState,
+                dispatchState: nextState,
+                state: nextState,
                 features: this.featureManager.get(key),
                 modules: this.moduleManager.getItems()
             });
+
             if (middleware.runPipeline().doesPass) {
                 this.dispatcher.dispatch(middleware.getDispatchItem());
                 this.stateManager.update(middleware.getKey(), middleware.getState());
@@ -102,7 +99,11 @@ export default class Store<TKey = string> {
         } else {
             console.error(`TrebleGSM: State "${key}" does not exist.`);
         }
-    }
+    };
+
+
+
+
     onDispatch = (callbackfn: (item: DispatchItem<any, TKey>) => void) => {
         this.stateManager.forEach((value, key) => this.dispatcher.stopListening(key));
         this.stateManager.forEach((value, key) => this.dispatcher.listen(key, callbackfn));

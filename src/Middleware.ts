@@ -27,55 +27,31 @@ export default class Middleware<TState = any, TKey = string>{
 
     //runs middleware pipeline
     runPipeline = () => {
-        const dispatchItem = this.dispatchItem;
-        const dispatchState = dispatchItem.dispatchState;
-        const type = dispatchItem.type;
-        const features = dispatchItem.features;
-        const doesTypePass = this.doesTypePass(dispatchState, type);
-        let pipelineItem: { doesPass: boolean, dispatchItem: DispatchItem<TState, TKey> } = { doesPass: true, dispatchItem: dispatchItem };
-        //makes sure state is accepted type
-        if (doesTypePass) {
-            //Makes sure the dispatch state is not the current state
-            const doesRenderPass = this.doesRenderPass(dispatchItem.currentState, dispatchItem.dispatchState, type);
-            if (doesRenderPass) {
-                const log = features?.log;
-                //runs log middleware fn
-                if (log) {
-                    log(dispatchItem);
-                }
+        const { dispatchState, type, features, currentState, key } = this.dispatchItem;
+        const pipelineResult = { doesPass: true, dispatchedItem: this.dispatchItem };
 
-                const didCheckPass = (features?.check) ? features.check(dispatchItem) : true;
-                const process = features?.process;
-                const callback = features?.callback;
-
-                //runs check middleware fn
-                if (didCheckPass) {
-                    //runs process middleware fn
-                    if (process) {
-                        pipelineItem = {
-                            doesPass: true,
-                            dispatchItem: {
-                                ...dispatchItem,
-                                state: process(dispatchItem) as any
-                            }
-                        }
-                    }
-                    if (callback) {
-                        callback(pipelineItem.dispatchItem)
-                    }
-                    return { ...pipelineItem, doesPass: true }
-                } else {
-                    return { ...pipelineItem, doesPass: false }
-                }
-            } else {
-                return pipelineItem;
-            }
-
-        } else {
-            console.error(`TrebleGSM: State "${dispatchItem.key}" must be of type "${dispatchItem.type}".`);
-            return pipelineItem;
+        if (!this.doesTypePass(dispatchState, type)) {
+            console.error(`TrebleGSM: State "${key}" must be of type "${type}".`);
+            return pipelineResult;
         }
-    }
+
+        if (!this.doesRenderPass(currentState, dispatchState, type)) {
+            return pipelineResult;
+        }
+
+        features?.onLog?.(this.dispatchItem);
+
+        if (!features?.onCheck || features.onCheck(this.dispatchItem)) {
+            const newState = features?.onProcess
+                ? { ...this.dispatchItem, state: features.onProcess(this.dispatchItem) as any }
+                : this.dispatchItem;
+            features?.onCallback?.(newState);
+            return { doesPass: true, dispatchedItem: newState };
+        } else {
+            return pipelineResult;
+        }
+    };
+
 
     public constructor(dispatchItem: DispatchItem<TState, TKey>) {
         this.dispatchItem = dispatchItem;

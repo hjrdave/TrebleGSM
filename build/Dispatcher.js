@@ -17,23 +17,23 @@ var Dispatcher = _createClass(function Dispatcher() {
   var _this = this;
   _classCallCheck(this, Dispatcher);
   _defineProperty(this, "listen", function (key, callbackfn) {
-    _this.EventEmitter.on(key, function () {
+    _this.eventEmitter.on(key, function () {
       if (_this.dispatchItem) {
         callbackfn(_this.dispatchItem);
       }
     });
   });
   _defineProperty(this, "stopListening", function (key) {
-    _this.EventEmitter.removeListener(key, function () {
+    _this.eventEmitter.removeListener(key, function () {
       return null;
     });
   });
   _defineProperty(this, "dispatch", function (item) {
     _this.dispatchItem = item;
-    _this.EventEmitter.emit(item.key);
+    _this.eventEmitter.emit(item.key);
   });
-  this.EventEmitter = new _events["default"]();
-  this.EventEmitter.setMaxListeners(Number.MAX_SAFE_INTEGER);
+  this.eventEmitter = new _events["default"]();
+  this.eventEmitter.setMaxListeners(Number.MAX_SAFE_INTEGER);
 });
 exports["default"] = Dispatcher;
 ;

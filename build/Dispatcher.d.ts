@@ -10,7 +10,7 @@ export interface DispatchItem<TState = any, TKey = string> {
     modules?: [any, any][];
 }
 export default class Dispatcher<TState = any, TKey = string> {
-    private EventEmitter;
+    private eventEmitter;
     private dispatchItem?;
     listen: (key: TKey, callbackfn: (item: DispatchItem<TState, TKey>) => void) => void;
     stopListening: (key: TKey) => void;

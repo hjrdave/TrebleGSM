@@ -12,27 +12,27 @@ export interface DispatchItem<TState = any, TKey = string> {
 }
 export default class Dispatcher<TState = any, TKey = string> {
 
-    private EventEmitter: Emitter;
+    private eventEmitter: Emitter;
     private dispatchItem?: DispatchItem<TState, TKey>;
 
     listen = (key: TKey, callbackfn: (item: DispatchItem<TState, TKey>) => void) => {
-        this.EventEmitter.on(key as string, () => {
+        this.eventEmitter.on(key as string, () => {
             if (this.dispatchItem) {
                 callbackfn(this.dispatchItem)
             }
         });
     }
     stopListening = (key: TKey) => {
-        this.EventEmitter.removeListener(key as string, () => null);
+        this.eventEmitter.removeListener(key as string, () => null);
     }
     dispatch = (item: DispatchItem<TState, TKey>) => {
         this.dispatchItem = item;
-        this.EventEmitter.emit(item.key as string);
+        this.eventEmitter.emit(item.key as string);
     }
 
     public constructor() {
-        this.EventEmitter = new Emitter();
-        this.EventEmitter.setMaxListeners(Number.MAX_SAFE_INTEGER);
+        this.eventEmitter = new Emitter();
+        this.eventEmitter.setMaxListeners(Number.MAX_SAFE_INTEGER);
     }
 };
 
