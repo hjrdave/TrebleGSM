@@ -3,9 +3,14 @@ import Features from "./Features";
 export interface DispatchItem<TState = any, TKey = string> {
     key: TKey;
     type?: Types;
-    dispatchState?: TState;
+    dispatchedState?: TState;
     currentState?: TState;
-    state?: TState;
+    nextState?: TState;
+    dispatchStatus: {
+        doesPass: boolean;
+        failCode: string;
+        failMsg: string;
+    };
     features?: Features<TState, TKey>;
     modules?: [any, any][];
 }

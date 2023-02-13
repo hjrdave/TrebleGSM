@@ -16,7 +16,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
 function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-var Middleware = _createClass(function Middleware(dispatchItem) {
+;
+var Middleware = _createClass(function Middleware(dispatchItem, setState) {
   var _this = this;
   _classCallCheck(this, Middleware);
   _defineProperty(this, "getDispatchItem", function () {
@@ -25,8 +26,8 @@ var Middleware = _createClass(function Middleware(dispatchItem) {
   _defineProperty(this, "getKey", function () {
     return _this.dispatchItem.key;
   });
-  _defineProperty(this, "getState", function () {
-    return _this.dispatchItem.state;
+  _defineProperty(this, "getNextState", function () {
+    return _this.dispatchItem.nextState;
   });
   _defineProperty(this, "doesTypePass", function (state, type) {
     return _TypeGaurd["default"].isCorrectType(state, type);
@@ -35,40 +36,41 @@ var Middleware = _createClass(function Middleware(dispatchItem) {
     return _RenderGaurd["default"].stateCanRender(state, state2, type);
   });
   _defineProperty(this, "runPipeline", function () {
-    var _features$onLog;
+    var _features$onRun;
     var _this$dispatchItem = _this.dispatchItem,
       dispatchState = _this$dispatchItem.dispatchState,
       type = _this$dispatchItem.type,
       features = _this$dispatchItem.features,
       currentState = _this$dispatchItem.currentState,
       key = _this$dispatchItem.key;
-    var pipelineResult = {
+    var result = {
       doesPass: true,
-      dispatchedItem: _this.dispatchItem
+      didNotPassReason: undefined,
+      dispatchItem: _this.dispatchItem,
+      setState: _this.setStoreState
     };
     if (!_this.doesTypePass(dispatchState, type)) {
       console.error("TrebleGSM: State \"".concat(key, "\" must be of type \"").concat(type, "\"."));
-      return pipelineResult;
+      return result;
     }
     if (!_this.doesRenderPass(currentState, dispatchState, type)) {
-      return pipelineResult;
+      return result;
     }
-    features === null || features === void 0 ? void 0 : (_features$onLog = features.onLog) === null || _features$onLog === void 0 ? void 0 : _features$onLog.call(features, _this.dispatchItem);
+    features === null || features === void 0 ? void 0 : (_features$onRun = features.onRun) === null || _features$onRun === void 0 ? void 0 : _features$onRun.call(features, _this.dispatchItem);
     if (!(features !== null && features !== void 0 && features.onCheck) || features.onCheck(_this.dispatchItem)) {
-      var _features$onCallback;
       var newState = features !== null && features !== void 0 && features.onProcess ? _objectSpread(_objectSpread({}, _this.dispatchItem), {}, {
         state: features.onProcess(_this.dispatchItem)
       }) : _this.dispatchItem;
-      features === null || features === void 0 ? void 0 : (_features$onCallback = features.onCallback) === null || _features$onCallback === void 0 ? void 0 : _features$onCallback.call(features, newState);
       return {
         doesPass: true,
         dispatchedItem: newState
       };
     } else {
-      return pipelineResult;
+      return result;
     }
   });
   this.dispatchItem = dispatchItem;
+  this.setStoreState = setState;
 });
 exports["default"] = Middleware;
 ;

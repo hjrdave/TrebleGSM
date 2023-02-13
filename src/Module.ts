@@ -1,5 +1,5 @@
 import TypeGuard from "./TypeGaurd";
-import { DispatchItem } from "./Dispatcher";
+import { DispatchItem } from "./DispatchItem";
 
 export interface ModuleItem<TState = any> {
     name: string,

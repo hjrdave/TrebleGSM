@@ -3,7 +3,7 @@
  * */
 //import './TrebleGSM';
 import { default as StoreManager, StoreItem } from "./Store";
-import { DispatchItem } from "./Dispatcher";
+import DispatchItem from "./DispatchItem";
 //import Module, { ModuleItem } from "./Module";
 
 
@@ -14,7 +14,7 @@ export class TrebleGSM<TKey = string> {
 
     //Returns a current snapshot of the Store
     getItems = () => {
-        return this.store.getItems();
+        return this.store.getAll();
     }
 
     //Adds new item with initial state to Store
@@ -43,7 +43,7 @@ export class TrebleGSM<TKey = string> {
     //     return newModule;
     // }
 
-    //Allows Store to use external Module to extend itself
+    // //Allows Store to use external Module to extend itself
     // use = (module: Module) => {
     //     this.store.newModule(module);
     // }
