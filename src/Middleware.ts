@@ -33,7 +33,7 @@ export default class Middleware<TState = any, TKey = string>{
         const dispatchItem = this.dispatchItem;
         const type = dispatchItem.getType();
         const dispatchedState = dispatchItem.getDispatchedState();
-        const currentState = dispatchItem.getCurrentState();
+        const prevState = dispatchItem.getPrevState();
         const isReady = dispatchItem.getIsReadyStatus();
         const features = dispatchItem.getFeatures();
         const setState = this.setStoreState;
@@ -50,7 +50,7 @@ export default class Middleware<TState = any, TKey = string>{
             return
         };
         //makes sure render passes
-        if (!this.doesRenderPass(currentState, dispatchedState, type)) {
+        if (!this.doesRenderPass(prevState, dispatchedState, type)) {
             dispatchItem.fail('StateDidNotChange');
             return
         }
@@ -58,10 +58,17 @@ export default class Middleware<TState = any, TKey = string>{
         features?.onRun?.(dispatchItem);
 
         //sees if dispatch passes middleware onCheck
-        if (!features?.onCheck || features.onCheck(dispatchItem)) {
+        const onCheckItem = {
+            key: dispatchItem.getKey(),
+            prevState: prevState,
+            dispatchedState: dispatchedState,
+            features: features,
+            modules: dispatchItem.getModules()
+        };
+        if (!features?.onCheck || features.onCheck(onCheckItem)) {
 
             //processes state if onProcess exists
-            features?.onProcess ? dispatchItem.setNextState(features.onProcess(dispatchItem)) : null;
+            features?.onRun ? dispatchItem.setNextState(features.onRun(dispatchItem)) : null;
 
             dispatchItem.success();
             return

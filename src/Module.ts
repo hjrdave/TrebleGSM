@@ -1,21 +1,21 @@
 import TypeGuard from "./TypeGaurd";
-import { DispatchItem } from "./DispatchItem";
+import { FeatureOnCallback, FeatureOnCheck, FeatureOnLoad, FeatureOnRun } from "./Features";
 
 export interface ModuleItem<TState = any> {
     name: string,
     extendStore?: any[],
     featureKeys?: string[],
-    log?: (item: DispatchItem<TState>) => void;
-    check?: (item: DispatchItem<TState>) => boolean;
-    process?: (item: DispatchItem<TState>) => DispatchItem<TState>;
-    callback?: (item: DispatchItem<TState>) => void;
+    onLoad: FeatureOnLoad;
+    onRun: FeatureOnRun;
+    onCheck: FeatureOnCheck;
+    onCallback: FeatureOnCallback;
     typeGaurds?: string[][],
     renderGaurd?: string[][]
 }
 
 export default class Module<TState = any> {
 
-    private name: string;
+    private name?: string;
     private extendStore?: any[];
     private featureKeys?: string[];
     private log?: any;
@@ -27,7 +27,7 @@ export default class Module<TState = any> {
     getName = () => {
         return this.name;
     }
-    getData: () => ModuleItem<TState> = () => {
+    getData = () => {
         return {
             name: this.name,
             extendStore: this.extendStore,
@@ -41,14 +41,14 @@ export default class Module<TState = any> {
     }
 
     public constructor(props: ModuleItem<TState>) {
-        this.name = props.name;
-        this.extendStore = props.extendStore;
-        this.featureKeys = props.featureKeys;
-        this.log = props.log;
-        this.check = props.check;
-        this.process = props.process;
-        this.typeGuard = props.typeGaurds;
-        this.renderGaurd = props.renderGaurd;
+        // this.name = props.name;
+        // this.extendStore = props.extendStore;
+        // this.featureKeys = props.featureKeys;
+        // this.log = props.onlog;
+        // this.check = props.check;
+        // this.process = props.process;
+        // this.typeGuard = props.typeGaurds;
+        // this.renderGaurd = props.renderGaurd;
     }
 };
 

@@ -1,8 +1,8 @@
 import { default as IStoreInstance } from "./TrebleGSM";
 import { Types as TTypes } from "./TypeGaurd";
-import { DispatchItem as IDispatchItem } from "./Dispatcher";
+import { IDispatchItem } from "./DispatchItem";
 import { StoreItem as IStoreItem } from "./Store";
-import { default as IFeatures, FeatureOnCheck, FeatureOnRun, FeatureOnProcess } from "./Features";
+import { default as IFeatures, FeatureOnCheck, FeatureOnRun } from "./Features";
 namespace TrebleGSM {
 
     export function Store<TKey = string>() {
@@ -13,8 +13,7 @@ namespace TrebleGSM {
     export interface DispatchItem<TState = any, TKey = string> extends IDispatchItem<TState, TKey> { };
     export interface Features<TState = any, TKey = string> extends IFeatures<TState, TKey> { };
     export type OnCheck<TState = any, TKey = string> = FeatureOnCheck<TState, TKey>;
-    export type OnLog<TState = any, TKey = string> = FeatureOnRun<TState, TKey>;
-    export type OnProcess<TState = any, TKey = string> = FeatureOnProcess<TState, TKey>;
+    export type OnRun<TState = any, TKey = string> = FeatureOnRun<TState, TKey>;
     export type StateTypes = TTypes;
 
 }

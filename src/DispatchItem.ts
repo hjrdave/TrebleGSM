@@ -2,11 +2,11 @@ import { Types } from "./TypeGaurd";
 import Features from "./Features";
 import Error, { ErrorCode } from "./Error";
 
-export interface DispatchItem<TState = any, TKey = string> {
+export interface IDispatchItem<TState = any, TKey = string> {
     key: TKey,
     type?: Types,
     dispatchedState?: TState;
-    currentState?: TState;
+    prevState?: TState;
     nextState?: TState;
     doesPass?: boolean;
     failCode?: string;
@@ -16,11 +16,11 @@ export interface DispatchItem<TState = any, TKey = string> {
     modules?: [any, any][];
 }
 
-export default class DispatcheItem<TState = any, TKey = string> {
+export default class DispatchItem<TState = any, TKey = string> {
 
     private key: TKey;
     private type?: Types;
-    private currentState?: TState;
+    private prevState?: TState;
     private dispatchedState?: TState;
     private nextState?: TState;
     private doesPass?: boolean;
@@ -36,8 +36,8 @@ export default class DispatcheItem<TState = any, TKey = string> {
     getType() {
         return this.type;
     }
-    getCurrentState() {
-        return this.currentState;
+    getPrevState() {
+        return this.prevState;
     }
     getDispatchedState() {
         return this.dispatchedState;
@@ -80,10 +80,10 @@ export default class DispatcheItem<TState = any, TKey = string> {
     }
 
 
-    public constructor(item: DispatchItem<TState, TKey>) {
+    public constructor(item: IDispatchItem<TState, TKey>) {
         this.key = item.key;
         this.type = item.type;
-        this.currentState = item.currentState;
+        this.prevState = item.prevState;
         this.dispatchedState = item.dispatchedState;
         this.nextState = item.nextState;
         this.features = item.features;
