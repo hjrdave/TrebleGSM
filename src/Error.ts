@@ -35,7 +35,7 @@ export default class Error<TKey = string> {
     }
 
 
-    constructor(props: { code: ErrorCode, key?: TKey, type?: Types }) {
+    constructor(props: { code: ErrorCodes, key?: TKey, type?: Types }) {
         this.code = props.code;
         this.stateKey = props.key;
         this.stateType = props.type;

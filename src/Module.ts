@@ -1,5 +1,5 @@
 import TypeGuard from "./TypeGuard";
-import { FeatureOnCallback, FeatureOnCheck, FeatureOnLoad, FeatureOnRun } from "./Features";
+import { FeatureOnCallback, FeatureOnLoad, FeatureOnRun } from "./Features";
 
 export interface ModuleItem<TState = any> {
     name: string,
@@ -7,7 +7,6 @@ export interface ModuleItem<TState = any> {
     featureKeys?: string[],
     onLoad: FeatureOnLoad;
     onRun: FeatureOnRun;
-    onCheck: FeatureOnCheck;
     onCallback: FeatureOnCallback;
     typeGuards?: string[][],
     renderGuard?: string[][]

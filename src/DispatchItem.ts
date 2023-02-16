@@ -1,6 +1,6 @@
 import { Types } from "./TypeGuard";
 import Features from "./Features";
-import Error, { ErrorCode } from "./Error";
+import Error, { ErrorCodes } from "./Error";
 
 export interface IDispatchItem<TState = any, TKey = string> {
     key: TKey,
@@ -58,7 +58,7 @@ export default class DispatchItem<TState = any, TKey = string> {
     getFailMsg() {
         return this.failMsg;
     }
-    fail(code: ErrorCode) {
+    fail(code: ErrorCodes) {
         const error = new Error({ code: code, key: this.key, type: this.type });
         this.failCode = error.getCode();
         this.failMsg = error.getMsg();

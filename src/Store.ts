@@ -100,12 +100,19 @@ export default class Store<TKey = string> {
                 modules: undefined
             });
             const middleware = new Middleware<TState, TKey>(dispatchItem, this.stateManager.update);
-            if (!middleware.isThisCorrectType() || !middleware.shouldThisRerender() || !middleware.onCheck()) {
-                return;
-            }
-            middleware.onRun();
-            this.dispatcher.dispatch(dispatchItem);
-            this.stateManager.update(dispatchItem.getKey(), dispatchItem.getNextState());
+
+            (!middleware.isThisCorrectType() || !middleware.shouldThisRerender()) ?
+                dispatchItem.fail(ErrorCodes.WrongType) : dispatchItem.success();
+
+            (dispatchItem.doesItemPass()) ? middleware.onRun() : null;
+
+            (dispatchItem.doesItemPass()) ? (
+                this.dispatcher.dispatch(dispatchItem),
+                this.stateManager.update(dispatchItem.getKey(), dispatchItem.getNextState())
+            ) : null;
+
+            middleware.onCallback();
+
         } else {
             const error = new Error({ code: ErrorCodes.StateDoesNotExist, key: key });
             error.throwConsoleError();
