@@ -1,4 +1,4 @@
-import TypeGuard from "./TypeGaurd";
+import TypeGuard from "./TypeGuard";
 import { FeatureOnCallback, FeatureOnCheck, FeatureOnLoad, FeatureOnRun } from "./Features";
 
 export interface ModuleItem<TState = any> {
@@ -9,8 +9,8 @@ export interface ModuleItem<TState = any> {
     onRun: FeatureOnRun;
     onCheck: FeatureOnCheck;
     onCallback: FeatureOnCallback;
-    typeGaurds?: string[][],
-    renderGaurd?: string[][]
+    typeGuards?: string[][],
+    renderGuard?: string[][]
 }
 
 export default class Module<TState = any> {
@@ -22,7 +22,7 @@ export default class Module<TState = any> {
     private check?: any;
     private process?: any;
     private typeGuard?: any;
-    private renderGaurd?: string[][];
+    private renderGuard?: string[][];
 
     getName = () => {
         return this.name;
@@ -36,7 +36,7 @@ export default class Module<TState = any> {
             check: this.check,
             process: this.process,
             typeGuard: this.typeGuard,
-            renderGuard: this.renderGaurd
+            renderGuard: this.renderGuard
         }
     }
 
@@ -47,8 +47,8 @@ export default class Module<TState = any> {
         // this.log = props.onlog;
         // this.check = props.check;
         // this.process = props.process;
-        // this.typeGuard = props.typeGaurds;
-        // this.renderGaurd = props.renderGaurd;
+        // this.typeGuard = props.typeGuards;
+        // this.renderGuard = props.renderGuard;
     }
 };
 

@@ -32,12 +32,12 @@ export class TrebleGSM<TKey = string> {
         return this.store.get(key)?.state as TState;
     }
 
-    //Listens to state changes and then fires callback everytime a state changes
+    //Listens to state changes and then fires callback every time a state changes
     onDispatch = (callbackfn: (item: DispatchItem<any, TKey>) => void) => {
         this.store.onDispatch(callbackfn);
     }
 
-    //Used by 3rd party libraies to create a new Module
+    //Used by 3rd party libraries to create a new Module
     // static newModule = <TState = any>(moduleData: ModuleItem<TState>) => {
     //     const newModule = new Module(moduleData);
     //     return newModule;

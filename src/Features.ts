@@ -20,3 +20,8 @@ export default interface Features<TState = any, TKey = string> {
     onRun?: FeatureOnRun<TState, TKey>;
     onCallback?: FeatureOnCallback<TState, TKey>;
 }
+
+//example of using an interface as a generic
+// function printPerson<T extends Person>(person: T): string {
+//     return `${person.name} is ${person.age} years old`;
+// }

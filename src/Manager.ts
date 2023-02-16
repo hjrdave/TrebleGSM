@@ -1,4 +1,5 @@
 import Inventory from "./Inventory";
+import Error, { ErrorCodes } from "./Error";
 
 export default class Manager<TItem = any, TKey = string> {
 
@@ -8,7 +9,8 @@ export default class Manager<TItem = any, TKey = string> {
         if (this.inventory.has(key)) {
             return this.inventory.get(key);
         }
-        console.error(`TrebleGSM: State "${key}" does not exist.`);
+        const error = new Error({ code: ErrorCodes.StateDoesNotExist, key: key });
+        error.throwConsoleError();
         return undefined;
     }
 
@@ -16,7 +18,8 @@ export default class Manager<TItem = any, TKey = string> {
         if (!this.inventory.has(key)) {
             this.inventory.set(key, value);
         } else {
-            console.error(`TrebleGSM: A State with key "${key}" already exists.`);
+            const error = new Error({ code: ErrorCodes.StateAlreadyExists, key: key });
+            error.throwConsoleError();
         }
     }
 
@@ -24,7 +27,8 @@ export default class Manager<TItem = any, TKey = string> {
         if (this.inventory.has(key)) {
             this.inventory.set(key, value);
         } else {
-            console.error(`TrebleGSM: State with key "${key}" does not exists.`);
+            const error = new Error({ code: ErrorCodes.StateDoesNotExist, key: key });
+            error.throwConsoleError();
         }
     }
 

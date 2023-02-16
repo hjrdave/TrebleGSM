@@ -1,10 +1,10 @@
 import Dispatcher from "./Dispatcher";
 import DispatchItem, { IDispatchItem } from "./DispatchItem";
-import { Types } from "./TypeGaurd";
+import { Types } from "./TypeGuard";
 import Inventory from "./Inventory";
 import Manager from "./Manager";
 import Middleware from "./Middleware";
-import Error from "./Error";
+import Error, { ErrorCodes } from "./Error";
 import Module from "./Module";
 import Features from "./Features";
 
@@ -54,19 +54,29 @@ export default class Store<TKey = string> {
     }
 
     new = <TState = any>({ key, state, type, features }: StoreItem<TState, TKey>) => {
-        if (Middleware.doesTypePass(state, type)) {
+        const dispatchItem = new DispatchItem({
+            key: key,
+            type: type,
+            prevState: state,
+            nextState: state,
+            features: features,
+            modules: undefined
+        });
+        const middleware = new Middleware<TState, TKey>(dispatchItem, this.stateManager.update);
+        if (middleware.isThisCorrectType()) {
             this.stateManager.add(key, state);
             this.typeManager.add(key, type);
             this.featureManager.add(key, features);
+            middleware.onload();
             return
         }
-        const error = new Error({ code: 'WrongType', key: key, type: type });
+        const error = new Error({ code: ErrorCodes.WrongType, key: key, type: type });
         error.throwConsoleError();
     }
 
     get = (key: TKey) => {
         if (!this.stateManager.has(key)) {
-            const error = new Error({ code: 'StateDoesNotExist', key: key });
+            const error = new Error({ code: ErrorCodes.StateDoesNotExist, key: key });
             error.throwConsoleError();
             return undefined;
         }
@@ -90,13 +100,14 @@ export default class Store<TKey = string> {
                 modules: undefined
             });
             const middleware = new Middleware<TState, TKey>(dispatchItem, this.stateManager.update);
-            middleware.run();
-            if (dispatchItem.doesItemPass()) {
-                this.dispatcher.dispatch(dispatchItem);
-                this.stateManager.update(dispatchItem.getKey(), dispatchItem.getNextState());
+            if (!middleware.isThisCorrectType() || !middleware.shouldThisRerender() || !middleware.onCheck()) {
+                return;
             }
+            middleware.onRun();
+            this.dispatcher.dispatch(dispatchItem);
+            this.stateManager.update(dispatchItem.getKey(), dispatchItem.getNextState());
         } else {
-            const error = new Error({ code: 'StateDoesNotExist', key: key });
+            const error = new Error({ code: ErrorCodes.StateDoesNotExist, key: key });
             error.throwConsoleError();
         }
     };

@@ -1,12 +1,12 @@
 import { default as Emitter } from "events";
-import DispatcheItem from "./DispatchItem";
+import DispatchItem from "./DispatchItem";
 
 export default class Dispatcher<TState = any, TKey = string> {
 
     private eventEmitter: Emitter;
-    private dispatchItem?: DispatcheItem<TState, TKey>;
+    private dispatchItem?: DispatchItem<TState, TKey>;
 
-    listen = (key: TKey, callbackfn: (item: DispatcheItem<TState, TKey>) => void) => {
+    listen = (key: TKey, callbackfn: (item: DispatchItem<TState, TKey>) => void) => {
         this.eventEmitter.on(key as string, () => {
             if (this.dispatchItem) {
                 callbackfn(this.dispatchItem)
@@ -16,7 +16,7 @@ export default class Dispatcher<TState = any, TKey = string> {
     stopListening = (key: TKey) => {
         this.eventEmitter.removeListener(key as string, () => null);
     }
-    dispatch = (item: DispatcheItem<TState, TKey>) => {
+    dispatch = (item: DispatchItem<TState, TKey>) => {
         this.dispatchItem = item;
         this.eventEmitter.emit(item.getKey() as string);
     }

@@ -1,5 +1,5 @@
 import { default as IStoreInstance } from "./TrebleGSM";
-import { Types as TTypes } from "./TypeGaurd";
+import { Types as TTypes } from "./TypeGuard";
 import { IDispatchItem } from "./DispatchItem";
 import { StoreItem as IStoreItem } from "./Store";
 import { default as IFeatures, FeatureOnCheck, FeatureOnRun } from "./Features";

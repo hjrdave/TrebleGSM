@@ -1,4 +1,4 @@
-import { Types } from "./TypeGaurd";
+import { Types } from "./TypeGuard";
 import Features from "./Features";
 import Error, { ErrorCode } from "./Error";
 
@@ -11,7 +11,6 @@ export interface IDispatchItem<TState = any, TKey = string> {
     doesPass?: boolean;
     failCode?: string;
     failMsg?: string;
-    isReady?: boolean;
     features?: Features<TState, TKey>;
     modules?: [any, any][];
 }
@@ -26,7 +25,6 @@ export default class DispatchItem<TState = any, TKey = string> {
     private doesPass?: boolean;
     private failCode?: string;
     private failMsg?: string;
-    private isReady?: boolean;
     private features?: Features<TState, TKey>;
     private modules?: [any, any][];
 
@@ -47,12 +45,6 @@ export default class DispatchItem<TState = any, TKey = string> {
     }
     setNextState(nextState: any) {
         this.nextState = nextState;
-    }
-    getIsReadyStatus() {
-        return this.isReady;
-    }
-    setIsReadyStatus(isReady: boolean) {
-        this.isReady = isReady;
     }
     getFeatures() {
         return this.features;

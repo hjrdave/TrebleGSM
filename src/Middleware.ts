@@ -1,82 +1,53 @@
-import TypeGuard, { Types } from "./TypeGaurd";
+import TypeGuard, { Types } from "./TypeGuard";
 import DispatchItem from "./DispatchItem";
-import RenderGuard from "./RenderGaurd";
+import RenderGuard from "./RenderGuard";
 
 export default class Middleware<TState = any, TKey = string>{
 
     private dispatchItem: DispatchItem<TState, TKey>;
     private setStoreState: (key: TKey, value: any) => void;
 
-    getDispatchItem = () => {
-        return this.dispatchItem;
-    }
-
-    getKey = () => {
-        return this.dispatchItem.getKey();
-    }
-
-    getNextState = () => {
-        return this.dispatchItem.getNextState();
-    }
-
-    static doesTypePass = (state: any, type?: Types) => {
-        return TypeGuard.isCorrectType(state, type)
-    }
-
-    doesRenderPass = (state: any, state2: any, type?: Types) => {
-        return RenderGuard.stateCanRender(state, state2, type);
-    }
-
-    //runs middleware pipeline
-    run = () => {
-
+    isThisCorrectType = () => {
         const dispatchItem = this.dispatchItem;
-        const type = dispatchItem.getType();
-        const dispatchedState = dispatchItem.getDispatchedState();
-        const prevState = dispatchItem.getPrevState();
-        const isReady = dispatchItem.getIsReadyStatus();
+        if (!TypeGuard.isCorrectType(dispatchItem.getNextState(), dispatchItem.getType())) {
+            return false;
+        };
+        return true;
+    }
+
+    shouldThisRerender = () => {
+        const dispatchItem = this.dispatchItem;
+        return RenderGuard.stateCanRender(dispatchItem.getPrevState(), dispatchItem.getNextState(), dispatchItem.getType()) ? true : false;
+    }
+
+    //runs onload middleware when state is initially added to store
+    onload = () => {
+        const dispatchItem = this.dispatchItem;
         const features = dispatchItem.getFeatures();
         const setState = this.setStoreState;
+        features?.onLoad?.(dispatchItem, setState);
+    }
 
-        //runs onLoad if this is initial state load
-        if (!isReady) {
-            features?.onLoad?.(dispatchItem, setState);
-            dispatchItem.setIsReadyStatus(true);
-        }
-
-        //makes sure type passes
-        if (!Middleware.doesTypePass(dispatchedState, type)) {
-            dispatchItem.fail('WrongType');
-            return
-        };
-        //makes sure render passes
-        if (!this.doesRenderPass(prevState, dispatchedState, type)) {
-            dispatchItem.fail('StateDidNotChange');
-            return
-        }
-        //run side effect
-        features?.onRun?.(dispatchItem);
-
-        //sees if dispatch passes middleware onCheck
+    onCheck = () => {
+        const dispatchItem = this.dispatchItem;
+        const dispatchedState = dispatchItem.getDispatchedState();
+        const prevState = dispatchItem.getPrevState();
+        const features = dispatchItem.getFeatures();
         const onCheckItem = {
             key: dispatchItem.getKey(),
             prevState: prevState,
             dispatchedState: dispatchedState,
             features: features,
-            modules: dispatchItem.getModules()
+            modules: features
         };
-        if (!features?.onCheck || features.onCheck(onCheckItem)) {
+        return (!features?.onCheck || features.onCheck(onCheckItem)) ? true : false
+    }
 
-            //processes state if onProcess exists
-            features?.onRun ? dispatchItem.setNextState(features.onRun(dispatchItem)) : null;
-
-            dispatchItem.success();
-            return
-        }
-
-        dispatchItem.success();
-        return
-    };
+    onRun = () => {
+        const dispatchItem = this.dispatchItem;
+        const features = dispatchItem.getFeatures();
+        features?.onRun ? features.onRun(dispatchItem) : null;
+    }
 
     public constructor(dispatchItem: DispatchItem<TState, TKey>, setState: (key: TKey, value: any) => void) {
         this.dispatchItem = dispatchItem;

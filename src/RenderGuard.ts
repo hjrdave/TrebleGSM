@@ -1,4 +1,4 @@
-import { Types } from "./TypeGaurd";
+import { Types } from "./TypeGuard";
 export default class RenderGuard {
 
     //primitive compare
@@ -41,7 +41,7 @@ export default class RenderGuard {
             return obj1.getTime() === obj2.getTime();
         }
 
-        if (!obj1 || !obj2 || typeof obj1 !== 'object' || typeof obj2 !== 'object') {
+        if (!obj1 || !obj2 || typeof obj1 !== Types.object || typeof obj2 !== Types.object) {
             return obj1 === obj2;
         }
 
@@ -57,16 +57,16 @@ export default class RenderGuard {
     }
 
     public static stateCanRender = (value?: any, value2?: any, type?: Types) => {
-        const gaurds = {
-            'object': () => (RenderGuard.shallowCompare(value, value2)),
-            'deepObject': () => (RenderGuard.deepCompare(value, value2)),
-            'array': () => (RenderGuard.compareArrays(value, value2)),
+        const Guards = {
+            [Types.object]: () => (RenderGuard.shallowCompare(value, value2)),
+            [Types.deepObject]: () => (RenderGuard.deepCompare(value, value2)),
+            [Types.array]: () => (RenderGuard.compareArrays(value, value2)),
             'default': () => (RenderGuard.isEquals(value, value2))
         }
         if (type !== undefined) {
-            return (type === 'object' || type === 'deepObject' || type === 'array') ? gaurds[type]() : gaurds['default']();
+            return (type === Types.object || type === Types.deepObject || type === Types.array) ? Guards[type]() : Guards['default']();
         } else {
-            return gaurds['default']();
+            return Guards['default']();
         }
     }
 
