@@ -28,21 +28,6 @@ export default class Middleware<TState = any, TKey = string>{
         features?.onLoad?.(dispatchItem, setState);
     }
 
-    // onCheck = () => {
-    //     const dispatchItem = this.dispatchItem;
-    //     const dispatchedState = dispatchItem.getDispatchedState();
-    //     const prevState = dispatchItem.getPrevState();
-    //     const features = dispatchItem.getFeatures();
-    //     const onCheckItem = {
-    //         key: dispatchItem.getKey(),
-    //         prevState: prevState,
-    //         dispatchedState: dispatchedState,
-    //         features: features,
-    //         modules: features
-    //     };
-    //     return (!features?.onCheck || features.onCheck(onCheckItem)) ? true : false
-    // }
-
     onRun = () => {
         const dispatchItem = this.dispatchItem;
         const features = dispatchItem.getFeatures();

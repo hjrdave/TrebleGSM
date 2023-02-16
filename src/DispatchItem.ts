@@ -12,7 +12,7 @@ export interface IDispatchItem<TState = any, TKey = string> {
     failCode?: string;
     failMsg?: string;
     features?: Features<TState, TKey>;
-    modules?: [any, any][];
+    //modules?: [any, any][];
 }
 
 export default class DispatchItem<TState = any, TKey = string> {
@@ -26,7 +26,7 @@ export default class DispatchItem<TState = any, TKey = string> {
     private failCode?: string;
     private failMsg?: string;
     private features?: Features<TState, TKey>;
-    private modules?: [any, any][];
+    //private modules?: [any, any][];
 
     getKey() {
         return this.key;
@@ -49,9 +49,9 @@ export default class DispatchItem<TState = any, TKey = string> {
     getFeatures() {
         return this.features;
     }
-    getModules() {
-        return this.modules;
-    }
+    // getModules() {
+    //     return this.modules;
+    // }
     getFailCode() {
         return this.failCode;
     }
@@ -79,7 +79,7 @@ export default class DispatchItem<TState = any, TKey = string> {
         this.dispatchedState = item.dispatchedState;
         this.nextState = item.nextState;
         this.features = item.features;
-        this.modules = item.modules;
+        // this.modules = item.modules;
     }
 };
 

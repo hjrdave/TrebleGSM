@@ -1,8 +1,8 @@
-import { default as IStoreInstance } from "./Store";
-import { Types as TTypes } from "./TypeGuard";
-import { IDispatchItem } from "./DispatchItem";
-import { StoreItem as IStoreItem } from "./Store";
-import { default as IFeatures, FeatureOnRun } from "./Features";
+import { default as IStoreInstance } from "../src/TrebleGSM";
+import { Types as TTypes } from "../src/TypeGuard";
+import { IDispatchItem } from "../src/DispatchItem";
+import { StoreItem as IStoreItem } from "../src/Store";
+import { default as IFeatures, FeatureOnRun } from "../src/Features";
 namespace TrebleGSM {
 
     export function Store<TKey = string>() {
