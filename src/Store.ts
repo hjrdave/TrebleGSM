@@ -6,7 +6,7 @@ import Manager from "./Manager";
 import Middleware from "./Middleware";
 import Error, { ErrorCodes } from "./Error";
 import Features from "./Features";
-import Module from "module";
+import Module from "./Module";
 
 export interface StoreItem<TState = any, TKey = string> {
     key: TKey;
@@ -14,16 +14,17 @@ export interface StoreItem<TState = any, TKey = string> {
     type?: Types;
     features?: Features<TState, TKey>;
 }
-export default class Store<TKey = string> {
+export default class Store<TState = any, TKey = string> {
 
-    //Managers
     private stateManager: Manager<any, TKey>;
     private typeManager: Manager<Types, TKey>;
     private featureManager: Manager<Features<any, TKey>, TKey>;
-    private moduleManager: Manager<any, TKey>;
-
-    //Dispatcher
+    private moduleManager: Manager<Module<TState, TKey, []>, TKey>;
     private dispatcher: Dispatcher<any, TKey>;
+
+    use = (module: Module<TState, TKey, []>) => {
+        this.moduleManager.add(module.getName(), module);
+    }
 
     getItems = () => {
         const storeItems: StoreItem<any, TKey>[] = this.stateManager.getItems().map((item) => ({
@@ -36,7 +37,7 @@ export default class Store<TKey = string> {
     }
 
     addItem = <TState = any>({ key, state, type, features }: StoreItem<TState, TKey>) => {
-        const dispatchItem = new DispatchItem({
+        const dispatchItem = new DispatchItem<TState, TKey>({
             key: key,
             type: type,
             prevState: state,
@@ -65,13 +66,13 @@ export default class Store<TKey = string> {
         const type = this.typeManager.get(key);
         const state = this.stateManager.get(key);
         const features = this.featureManager.get(key);
-        const storeItem: StoreItem<any, TKey> = { type, key, state, features };
+        const storeItem: StoreItem<TState, TKey> = { type, key, state, features };
         return storeItem;
     };
 
     setState = <TState = any>(key: TKey, state: TState | ((prevState: TState) => TState)) => {
         if (this.stateManager.has(key)) {
-            const dispatchItem = new DispatchItem({
+            const dispatchItem = new DispatchItem<TState, TKey>({
                 key: key,
                 type: this.typeManager.get(key),
                 prevState: this.getState(key)?.state as TState,
@@ -98,9 +99,9 @@ export default class Store<TKey = string> {
         }
     };
 
-    onDispatch = (callbackfn: (item: DispatchItem<any, TKey>) => void) => {
-        this.stateManager.forEach((value, key) => this.dispatcher.stopListening(key));
-        this.stateManager.forEach((value, key) => this.dispatcher.listen(key, callbackfn));
+    onDispatch = (callbackfn: (item: DispatchItem<TState, TKey>) => void) => {
+        this.stateManager.forEach((_, key) => this.dispatcher.stopListening(key));
+        this.stateManager.forEach((_, key) => this.dispatcher.listen(key, callbackfn));
     }
 
     public constructor() {

@@ -14,7 +14,7 @@ export interface IDispatchItem<TState = any, TKey = string> {
     failCode?: string;
     failMsg?: string;
     features?: Features<TState, TKey>;
-    modules: Manager<Module, TKey>;
+    modules: Manager<Module<TState, TKey, []>, TKey>;
 }
 
 export default class DispatchItem<TState = any, TKey = string> {
@@ -28,7 +28,7 @@ export default class DispatchItem<TState = any, TKey = string> {
     private failCode?: string;
     private failMsg?: string;
     private features?: Features<TState, TKey>;
-    private modules?: Manager<Module, TKey>;
+    private modules?: Manager<Module<TState, TKey, []>, TKey>;
 
     getKey() {
         return this.key;

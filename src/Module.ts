@@ -3,7 +3,7 @@ import DispatchItem from "./DispatchItem";
 import { FeatureOnCallback, FeatureOnLoad, FeatureOnRun, FeatureOnTypeCheck } from "./Features";
 
 export interface ModuleItem<TState = any, TKey = string, TFeatureKeys = []> {
-    name: string,
+    name: TKey,
     featureKeys?: TFeatureKeys,
     onTypeCheck?: FeatureOnTypeCheck<TState, TKey>;
     onLoad?: FeatureOnLoad<TState, TKey>;
@@ -13,12 +13,12 @@ export interface ModuleItem<TState = any, TKey = string, TFeatureKeys = []> {
 
 export default class Module<TState = any, TKey = string, TFeatureKeys = []> {
 
-    private name?: string;
+    private name: TKey;
     private featureKeys?: TFeatureKeys;
-    private onTypeCheck?: FeatureOnTypeCheck<TState, TKey>;
-    private onLoad?: FeatureOnLoad<TState, TKey>;
-    private onRun?: FeatureOnRun<TState, TKey>;
-    private onCallback?: FeatureOnCallback<TState, TKey>;
+    private featureOnTypeCheck?: FeatureOnTypeCheck<TState, TKey>;
+    private featureOnLoad?: FeatureOnLoad<TState, TKey>;
+    private featureOnRun?: FeatureOnRun<TState, TKey>;
+    private featureOnCallback?: FeatureOnCallback<TState, TKey>;
 
     getName = () => {
         return this.name;
@@ -26,25 +26,25 @@ export default class Module<TState = any, TKey = string, TFeatureKeys = []> {
     getFeatureKeys = () => {
         return this.featureKeys;
     }
-    runTypeCheck = (dispatchItem: DispatchItem<TState, TKey>) => {
-        return this.onTypeCheck?.(dispatchItem) ?? true;
+    onTypeCheck = (dispatchItem: DispatchItem<TState, TKey>) => {
+        return this.featureOnTypeCheck?.(dispatchItem) ?? true;
     }
-    runOnLoad = (dispatchItem: DispatchItem<TState, TKey>, setState: (key: TKey, value: any) => void) => {
-        this.onLoad?.(dispatchItem, setState);
+    onLoad = (dispatchItem: DispatchItem<TState, TKey>, setState: (key: TKey, value: any) => void) => {
+        this.featureOnLoad?.(dispatchItem, setState);
     }
-    runOnRun = (dispatchItem: DispatchItem<TState, TKey>) => {
-        this.onRun?.(dispatchItem);
+    onRun = (dispatchItem: DispatchItem<TState, TKey>) => {
+        this.featureOnRun?.(dispatchItem);
     }
-    runOnCallback = (dispatchItem: DispatchItem<TState, TKey>, setState: (key: TKey, value: any) => void) => {
-        this.onCallback?.(dispatchItem, setState);
+    onCallback = (dispatchItem: DispatchItem<TState, TKey>, setState: (key: TKey, value: any) => void) => {
+        this.featureOnCallback?.(dispatchItem, setState);
     }
     public constructor(props: ModuleItem<TState, TKey, TFeatureKeys>) {
         this.name = props.name;
         this.featureKeys = props.featureKeys;
-        this.onTypeCheck = props.onTypeCheck;
-        this.onLoad = props.onLoad;
-        this.onRun = props.onRun;
-        this.onCallback = props.onCallback;
+        this.featureOnTypeCheck = props.onTypeCheck;
+        this.featureOnLoad = props.onLoad;
+        this.featureOnRun = props.onRun;
+        this.featureOnCallback = props.onCallback;
     }
 };
 

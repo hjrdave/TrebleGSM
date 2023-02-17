@@ -29,10 +29,8 @@ export default class Middleware<TState = any, TKey = string>{
         const features = dispatchItem.getFeatures();
         const setState = this.setStoreState;
         features?.onLoad?.(dispatchItem, setState);
-
-        //This is what a module iteration should look like
         modules?.forEach((module) => {
-            module.runOnLoad(dispatchItem as any, setState as any);
+            module.onLoad(dispatchItem, setState);
         });
     }
 
@@ -41,9 +39,8 @@ export default class Middleware<TState = any, TKey = string>{
         const modules = this.dispatchItem.getModules();
         const features = dispatchItem.getFeatures();
         features?.onRun ? features.onRun(dispatchItem) : null;
-        //This is what a module iteration should look like
         modules?.forEach((module) => {
-            module.runOnRun(dispatchItem as any);
+            module.onRun(dispatchItem);
         });
     }
 
@@ -53,9 +50,8 @@ export default class Middleware<TState = any, TKey = string>{
         const features = dispatchItem.getFeatures();
         const setState = this.setStoreState;
         features?.onCallback ? features.onCallback(dispatchItem, setState) : null;
-        //This is what a module iteration should look like
         modules?.forEach((module) => {
-            module.runOnCallback(dispatchItem as any, setState as any);
+            module.onCallback(dispatchItem, setState);
         });
     }
 
