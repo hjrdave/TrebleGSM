@@ -1,53 +1,50 @@
 import TypeGuard from "./TypeGuard";
-import { FeatureOnCallback, FeatureOnLoad, FeatureOnRun } from "./Features";
+import DispatchItem from "./DispatchItem";
+import { FeatureOnCallback, FeatureOnLoad, FeatureOnRun, FeatureOnTypeCheck } from "./Features";
 
-export interface ModuleItem<TState = any> {
+export interface ModuleItem<TState = any, TKey = string, TFeatureKeys = []> {
     name: string,
-    extendStore?: any[],
-    featureKeys?: string[],
-    onLoad: FeatureOnLoad;
-    onRun: FeatureOnRun;
-    onCallback: FeatureOnCallback;
-    typeGuards?: string[][],
-    renderGuard?: string[][]
+    featureKeys?: TFeatureKeys,
+    onTypeCheck?: FeatureOnTypeCheck<TState, TKey>;
+    onLoad?: FeatureOnLoad<TState, TKey>;
+    onRun?: FeatureOnRun<TState, TKey>;
+    onCallback?: FeatureOnCallback<TState, TKey>;
 }
 
-export default class Module<TState = any> {
+export default class Module<TState = any, TKey = string, TFeatureKeys = []> {
 
     private name?: string;
-    private extendStore?: any[];
-    private featureKeys?: string[];
-    private log?: any;
-    private check?: any;
-    private process?: any;
-    private typeGuard?: any;
-    private renderGuard?: string[][];
+    private featureKeys?: TFeatureKeys;
+    private onTypeCheck?: FeatureOnTypeCheck<TState, TKey>;
+    private onLoad?: FeatureOnLoad<TState, TKey>;
+    private onRun?: FeatureOnRun<TState, TKey>;
+    private onCallback?: FeatureOnCallback<TState, TKey>;
 
     getName = () => {
         return this.name;
     }
-    getData = () => {
-        return {
-            name: this.name,
-            extendStore: this.extendStore,
-            featureKeys: this.featureKeys,
-            log: this.log,
-            check: this.check,
-            process: this.process,
-            typeGuard: this.typeGuard,
-            renderGuard: this.renderGuard
-        }
+    getFeatureKeys = () => {
+        return this.featureKeys;
     }
-
-    public constructor(props: ModuleItem<TState>) {
-        // this.name = props.name;
-        // this.extendStore = props.extendStore;
-        // this.featureKeys = props.featureKeys;
-        // this.log = props.onlog;
-        // this.check = props.check;
-        // this.process = props.process;
-        // this.typeGuard = props.typeGuards;
-        // this.renderGuard = props.renderGuard;
+    runTypeCheck = (dispatchItem: DispatchItem<TState, TKey>) => {
+        return this.onTypeCheck?.(dispatchItem) ?? true;
+    }
+    runOnLoad = (dispatchItem: DispatchItem<TState, TKey>, setState: (key: TKey, value: any) => void) => {
+        this.onLoad?.(dispatchItem, setState);
+    }
+    runOnRun = (dispatchItem: DispatchItem<TState, TKey>) => {
+        this.onRun?.(dispatchItem);
+    }
+    runOnCallback = (dispatchItem: DispatchItem<TState, TKey>, setState: (key: TKey, value: any) => void) => {
+        this.onCallback?.(dispatchItem, setState);
+    }
+    public constructor(props: ModuleItem<TState, TKey, TFeatureKeys>) {
+        this.name = props.name;
+        this.featureKeys = props.featureKeys;
+        this.onTypeCheck = props.onTypeCheck;
+        this.onLoad = props.onLoad;
+        this.onRun = props.onRun;
+        this.onCallback = props.onCallback;
     }
 };
 

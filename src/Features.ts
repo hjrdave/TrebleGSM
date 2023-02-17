@@ -1,5 +1,7 @@
 import DispatchItem from "./DispatchItem";
 
+export type FeatureOnTypeCheck<TState = any, TKey = string> = (item: DispatchItem<TState, TKey>) => boolean;
+
 export type FeatureOnLoad<TState = any, TKey = string> = (item: DispatchItem<TState, TKey>, setState: <TItem = any>(key: TKey, value: TItem) => void) => void;
 
 export type FeatureOnRun<TState = any, TKey = string> = (item: DispatchItem<TState, TKey>) => void;
@@ -7,6 +9,7 @@ export type FeatureOnRun<TState = any, TKey = string> = (item: DispatchItem<TSta
 export type FeatureOnCallback<TState = any, TKey = string> = (item: DispatchItem<TState, TKey>, setState: <TItem = any>(key: TKey, value: TItem) => void) => void;
 
 export default interface Features<TState = any, TKey = string> {
+    onTypeCheck?: FeatureOnTypeCheck<TState, TKey>
     onLoad?: FeatureOnLoad<TState, TKey>;
     onRun?: FeatureOnRun<TState, TKey>;
     onCallback?: FeatureOnCallback<TState, TKey>;

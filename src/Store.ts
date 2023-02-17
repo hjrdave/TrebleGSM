@@ -6,6 +6,7 @@ import Manager from "./Manager";
 import Middleware from "./Middleware";
 import Error, { ErrorCodes } from "./Error";
 import Features from "./Features";
+import Module from "module";
 
 export interface StoreItem<TState = any, TKey = string> {
     key: TKey;
@@ -19,7 +20,7 @@ export default class Store<TKey = string> {
     private stateManager: Manager<any, TKey>;
     private typeManager: Manager<Types, TKey>;
     private featureManager: Manager<Features<any, TKey>, TKey>;
-    //private moduleManager: Manager;
+    private moduleManager: Manager<any, TKey>;
 
     //Dispatcher
     private dispatcher: Dispatcher<any, TKey>;
@@ -41,10 +42,10 @@ export default class Store<TKey = string> {
             prevState: state,
             nextState: state,
             features: features,
-            //modules: undefined
+            modules: this.moduleManager
         });
         const middleware = new Middleware<TState, TKey>(dispatchItem, this.stateManager.update);
-        if (middleware.isThisCorrectType()) {
+        if (middleware.onTypeCheck()) {
             this.stateManager.add(key, state);
             this.typeManager.add(key, type);
             this.featureManager.add(key, features);
@@ -78,15 +79,12 @@ export default class Store<TKey = string> {
                     ? (state as ((prevState: TState) => TState))(this.getState(key)?.state as TState)
                     : state as TState,
                 features: this.featureManager.get(key),
-                //modules: undefined
+                modules: this.moduleManager
             });
             const middleware = new Middleware<TState, TKey>(dispatchItem, this.stateManager.update);
-
-            (!middleware.isThisCorrectType() || !middleware.shouldThisRerender()) ?
-                dispatchItem.fail(ErrorCodes.WrongType) : dispatchItem.success();
-
+            (middleware.onTypeCheck()) ? null : dispatchItem.fail(ErrorCodes.WrongType);
+            (middleware.shouldThisRerender()) ? null : dispatchItem.fail(ErrorCodes.StateDidNotChange);
             (dispatchItem.doesItemPass()) ? middleware.onRun() : null;
-
             (dispatchItem.doesItemPass()) ? (
                 this.dispatcher.dispatch(dispatchItem),
                 this.stateManager.update(dispatchItem.getKey(), dispatchItem.getNextState())
@@ -109,7 +107,7 @@ export default class Store<TKey = string> {
         this.stateManager = new Manager(new Inventory);
         this.typeManager = new Manager(new Inventory);
         this.featureManager = new Manager(new Inventory);
-        //this.moduleManager = new Manager(new Inventory);
+        this.moduleManager = new Manager(new Inventory);
         this.dispatcher = new Dispatcher();
     }
 };
