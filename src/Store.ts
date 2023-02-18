@@ -11,7 +11,7 @@ import Module from "./Module";
 export interface StoreItem<TState = any, TKey = string> {
     key: TKey;
     state?: TState;
-    type?: Types;
+    type?: keyof typeof Types;
     features?: Features<TState, TKey>;
 }
 export default class Store<TState = any, TKey = string> {
@@ -62,23 +62,21 @@ export default class Store<TState = any, TKey = string> {
             const error = new Error({ code: ErrorCodes.StateDoesNotExist, key: key });
             error.throwConsoleError();
             return undefined;
-        }
-        const type = this.typeManager.get(key);
-        const state = this.stateManager.get(key);
-        const features = this.featureManager.get(key);
-        const storeItem: StoreItem<TState, TKey> = { type, key, state, features };
-        return storeItem;
+        };
+        return this.stateManager.get(key);
     };
 
     setState = <TState = any>(key: TKey, state: TState | ((prevState: TState) => TState)) => {
+
         if (this.stateManager.has(key)) {
+            //@ts-ignore
+            const _state = (typeof state === 'function') ? state(this.getState(key) as TState) as TState : state as TState;
             const dispatchItem = new DispatchItem<TState, TKey>({
                 key: key,
                 type: this.typeManager.get(key),
-                prevState: this.getState(key)?.state as TState,
-                nextState: (typeof state === 'function')
-                    ? (state as ((prevState: TState) => TState))(this.getState(key)?.state as TState)
-                    : state as TState,
+                prevState: this.getState(key) as TState,
+                dispatchedState: _state,
+                nextState: _state,
                 features: this.featureManager.get(key),
                 modules: this.moduleManager
             });
@@ -90,9 +88,7 @@ export default class Store<TState = any, TKey = string> {
                 this.dispatcher.dispatch(dispatchItem),
                 this.stateManager.update(dispatchItem.getKey(), dispatchItem.getNextState())
             ) : null;
-
             middleware.onCallback();
-
         } else {
             const error = new Error({ code: ErrorCodes.StateDoesNotExist, key: key });
             error.throwConsoleError();

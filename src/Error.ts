@@ -11,7 +11,7 @@ export default class Error<TKey = string> {
 
     private code: ErrorCodes;
     private stateKey?: TKey;
-    private stateType?: Types;
+    private stateType?: keyof typeof Types;
     private msg?: string;
     getMsg() {
         const message = {
@@ -35,7 +35,7 @@ export default class Error<TKey = string> {
     }
 
 
-    constructor(props: { code: ErrorCodes, key?: TKey, type?: Types }) {
+    constructor(props: { code: ErrorCodes, key?: TKey, type?: keyof typeof Types }) {
         this.code = props.code;
         this.stateKey = props.key;
         this.stateType = props.type;

@@ -6,7 +6,7 @@ import Error, { ErrorCodes } from "./Error";
 
 export interface IDispatchItem<TState = any, TKey = string> {
     key: TKey,
-    type?: Types,
+    type?: keyof typeof Types,
     dispatchedState?: TState;
     prevState?: TState;
     nextState?: TState;
@@ -20,11 +20,11 @@ export interface IDispatchItem<TState = any, TKey = string> {
 export default class DispatchItem<TState = any, TKey = string> {
 
     private key: TKey;
-    private type?: Types;
+    private type?: keyof typeof Types;;
     private prevState?: TState;
     private dispatchedState?: TState;
     private nextState?: TState;
-    private doesPass?: boolean;
+    private doesPass = true;
     private failCode?: string;
     private failMsg?: string;
     private features?: Features<TState, TKey>;

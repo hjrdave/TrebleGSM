@@ -33,7 +33,7 @@ export default class TypeGuard {
         return value === null;
     }
 
-    public static isCorrectType = (value: any, type?: Types) => {
+    public static isCorrectType = (value: any, type?: keyof typeof Types) => {
         if (type !== undefined) {
             const types = {
                 [Types.number]: () => (TypeGuard.isNumber(value)),
