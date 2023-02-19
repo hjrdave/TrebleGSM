@@ -1,12 +1,12 @@
-import DispatchItem from "./DispatchItem";
+import Parcel from "./Parcel";
 
-export type FeatureOnTypeCheck<TState = any, TKey = string> = (item: DispatchItem<TState, TKey>) => boolean;
+export type FeatureOnTypeCheck<TState = any, TKey = string> = (parcel: Parcel<TState, TKey>) => boolean;
 
-export type FeatureOnLoad<TState = any, TKey = string> = (item: DispatchItem<TState, TKey>, setState: <TItem = any>(key: TKey, value: TItem) => void) => void;
+export type FeatureOnLoad<TState = any, TKey = string> = (parcel: Parcel<TState, TKey>, setState: <TItem = any>(key: TKey, value: TItem) => void) => void;
 
-export type FeatureOnRun<TState = any, TKey = string> = (item: DispatchItem<TState, TKey>) => void;
+export type FeatureOnRun<TState = any, TKey = string> = (parcel: Parcel<TState, TKey>) => void;
 
-export type FeatureOnCallback<TState = any, TKey = string> = (item: DispatchItem<TState, TKey>, setState: <TItem = any>(key: TKey, value: TItem) => void) => void;
+export type FeatureOnCallback<TState = any, TKey = string> = (parcel: Parcel<TState, TKey>, setState: <TItem = any>(key: TKey, value: TItem) => void) => void;
 
 export default interface Features<TState = any, TKey = string> {
     onTypeCheck?: FeatureOnTypeCheck<TState, TKey>

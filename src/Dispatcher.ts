@@ -1,24 +1,31 @@
 import { default as Emitter } from "events";
-import DispatchItem from "./DispatchItem";
+import Middleware from "./Middleware";
+import Parcel, { IParcel } from "./Parcel";
 
 export default class Dispatcher<TState = any, TKey = string> {
 
     private eventEmitter: Emitter;
-    private dispatchItem?: DispatchItem<TState, TKey>;
+    private parcel?: Parcel<TState, TKey>;
 
-    listen = (key: TKey, callbackfn: (item: DispatchItem<TState, TKey>) => void) => {
+    listen = (key: TKey, callbackfn: (item: Parcel<TState, TKey>) => void) => {
         this.eventEmitter.on(key as string, () => {
-            if (this.dispatchItem) {
-                callbackfn(this.dispatchItem)
+            if (this.parcel) {
+                callbackfn(this.parcel)
             }
         });
     }
     stopListening = (key: TKey) => {
         this.eventEmitter.removeListener(key as string, () => null);
     }
-    dispatch = (item: DispatchItem<TState, TKey>) => {
-        this.dispatchItem = item;
-        this.eventEmitter.emit(item.getKey() as string);
+    dispatch = (parcel: Parcel<TState, TKey>) => {
+        this.parcel = parcel;
+        this.eventEmitter.emit(parcel.getKey() as string);
+    }
+    createParcel = (contents: IParcel<TState, TKey>) => {
+        return new Parcel(contents);
+    }
+    runMiddleware = (parcel: Parcel<TState, TKey>, setState: (key: TKey, value: any) => void) => {
+        return new Middleware(parcel, setState);
     }
 
     public constructor() {

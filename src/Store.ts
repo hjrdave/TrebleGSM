@@ -1,5 +1,5 @@
 import Dispatcher from "./Dispatcher";
-import DispatchItem from "./DispatchItem";
+import Parcel from "./Parcel";
 import { Types } from "./TypeGuard";
 import Inventory from "./Inventory";
 import Manager from "./Manager";
@@ -20,7 +20,7 @@ export default class Store<TState = any, TKey = string> {
     private typeManager: Manager<Types, TKey>;
     private featureManager: Manager<Features<any, TKey>, TKey>;
     private moduleManager: Manager<Module<TState, TKey, []>, TKey>;
-    private dispatcher: Dispatcher<any, TKey>;
+    private dispatcher: Dispatcher<TState, TKey>;
 
     use = (module: Module<TState, TKey, []>) => {
         this.moduleManager.add(module.getName(), module);
@@ -37,19 +37,19 @@ export default class Store<TState = any, TKey = string> {
     }
 
     addItem = <TState = any>({ key, state, type, features }: StoreItem<TState, TKey>) => {
-        const dispatchItem = new DispatchItem<TState, TKey>({
+        const parcel = this.dispatcher.createParcel({
             key: key,
             type: type,
-            prevState: state,
-            nextState: state,
-            features: features,
+            prevState: state as any,
+            nextState: state as any,
+            features: features as any,
             modules: this.moduleManager
         });
-        const middleware = new Middleware<TState, TKey>(dispatchItem, this.stateManager.update);
+        const middleware = this.dispatcher.runMiddleware(parcel, this.setState);
         if (middleware.onTypeCheck()) {
-            this.stateManager.add(key, state);
-            this.typeManager.add(key, type);
-            this.featureManager.add(key, features);
+            this.stateManager.add(parcel.getKey(), parcel.getNextState());
+            this.typeManager.add(parcel.getKey(), parcel.getType());
+            this.featureManager.add(parcel.getKey(), parcel.getFeatures());
             middleware.onload();
             return
         }
@@ -71,22 +71,22 @@ export default class Store<TState = any, TKey = string> {
         if (this.stateManager.has(key)) {
             //@ts-ignore
             const _state = (typeof state === 'function') ? state(this.getState(key) as TState) as TState : state as TState;
-            const dispatchItem = new DispatchItem<TState, TKey>({
+            const parcel = this.dispatcher.createParcel({
                 key: key,
                 type: this.typeManager.get(key),
-                prevState: this.getState(key) as TState,
-                dispatchedState: _state,
-                nextState: _state,
+                prevState: this.getState(key),
+                dispatchState: _state as any,
+                nextState: _state as any,
                 features: this.featureManager.get(key),
                 modules: this.moduleManager
             });
-            const middleware = new Middleware<TState, TKey>(dispatchItem, this.stateManager.update);
-            (middleware.onTypeCheck()) ? null : dispatchItem.fail(ErrorCodes.WrongType);
-            (middleware.shouldThisRerender()) ? null : dispatchItem.fail(ErrorCodes.StateDidNotChange);
-            (dispatchItem.doesItemPass()) ? middleware.onRun() : null;
-            (dispatchItem.doesItemPass()) ? (
-                this.dispatcher.dispatch(dispatchItem),
-                this.stateManager.update(dispatchItem.getKey(), dispatchItem.getNextState())
+            const middleware = this.dispatcher.runMiddleware(parcel, this.stateManager.update);
+            (middleware.onTypeCheck()) ? null : parcel.fail(ErrorCodes.WrongType);
+            (middleware.shouldThisRerender()) ? null : parcel.fail(ErrorCodes.StateDidNotChange);
+            (parcel.doesItemPass()) ? middleware.onRun() : null;
+            (parcel.doesItemPass()) ? (
+                this.dispatcher.dispatch(parcel),
+                this.stateManager.update(parcel.getKey(), parcel.getNextState())
             ) : null;
             middleware.onCallback();
         } else {
@@ -95,7 +95,7 @@ export default class Store<TState = any, TKey = string> {
         }
     };
 
-    onDispatch = (callbackfn: (item: DispatchItem<TState, TKey>) => void) => {
+    onDispatch = (callbackfn: (parcel: Parcel<TState, TKey>) => void) => {
         this.stateManager.forEach((_, key) => this.dispatcher.stopListening(key));
         this.stateManager.forEach((_, key) => this.dispatcher.listen(key, callbackfn));
     }

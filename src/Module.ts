@@ -1,5 +1,5 @@
 import TypeGuard from "./TypeGuard";
-import DispatchItem from "./DispatchItem";
+import Parcel from "./Parcel";
 import { FeatureOnCallback, FeatureOnLoad, FeatureOnRun, FeatureOnTypeCheck } from "./Features";
 
 export interface ModuleItem<TState = any, TKey = string, TFeatureKeys = []> {
@@ -26,17 +26,17 @@ export default class Module<TState = any, TKey = string, TFeatureKeys = []> {
     getFeatureKeys = () => {
         return this.featureKeys;
     }
-    onTypeCheck = (dispatchItem: DispatchItem<TState, TKey>) => {
-        return this.featureOnTypeCheck?.(dispatchItem) ?? true;
+    onTypeCheck = (parcel: Parcel<TState, TKey>) => {
+        return this.featureOnTypeCheck?.(parcel) ?? true;
     }
-    onLoad = (dispatchItem: DispatchItem<TState, TKey>, setState: (key: TKey, value: any) => void) => {
-        this.featureOnLoad?.(dispatchItem, setState);
+    onLoad = (parcel: Parcel<TState, TKey>, setState: (key: TKey, value: any) => void) => {
+        this.featureOnLoad?.(parcel, setState);
     }
-    onRun = (dispatchItem: DispatchItem<TState, TKey>) => {
-        this.featureOnRun?.(dispatchItem);
+    onRun = (parcel: Parcel<TState, TKey>) => {
+        this.featureOnRun?.(parcel);
     }
-    onCallback = (dispatchItem: DispatchItem<TState, TKey>, setState: (key: TKey, value: any) => void) => {
-        this.featureOnCallback?.(dispatchItem, setState);
+    onCallback = (parcel: Parcel<TState, TKey>, setState: (key: TKey, value: any) => void) => {
+        this.featureOnCallback?.(parcel, setState);
     }
     public constructor(props: ModuleItem<TState, TKey, TFeatureKeys>) {
         this.name = props.name;

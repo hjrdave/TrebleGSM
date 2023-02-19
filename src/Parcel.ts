@@ -4,25 +4,25 @@ import Module from "./Module";
 import Manager from "./Manager";
 import Error, { ErrorCodes } from "./Error";
 
-export interface IDispatchItem<TState = any, TKey = string> {
+export interface IParcel<TState = any, TKey = string> {
     key: TKey,
     type?: keyof typeof Types,
-    dispatchedState?: TState;
+    dispatchState?: TState;
     prevState?: TState;
     nextState?: TState;
     doesPass?: boolean;
-    failCode?: string;
+    failCode?: ErrorCodes;
     failMsg?: string;
     features?: Features<TState, TKey>;
     modules: Manager<Module<TState, TKey, []>, TKey>;
 }
 
-export default class DispatchItem<TState = any, TKey = string> {
+export default class Parcel<TState = any, TKey = string> {
 
     private key: TKey;
     private type?: keyof typeof Types;;
     private prevState?: TState;
-    private dispatchedState?: TState;
+    private dispatchState?: TState;
     private nextState?: TState;
     private doesPass = true;
     private failCode?: string;
@@ -39,13 +39,13 @@ export default class DispatchItem<TState = any, TKey = string> {
     getPrevState() {
         return this.prevState;
     }
-    getDispatchedState() {
-        return this.dispatchedState;
+    getDispatchState() {
+        return this.dispatchState;
     }
     getNextState() {
         return this.nextState;
     }
-    setNextState(nextState: any) {
+    setNextState(nextState: TState) {
         this.nextState = nextState;
     }
     getFeatures() {
@@ -74,11 +74,11 @@ export default class DispatchItem<TState = any, TKey = string> {
     }
 
 
-    public constructor(item: IDispatchItem<TState, TKey>) {
+    public constructor(item: IParcel<TState, TKey>) {
         this.key = item.key;
         this.type = item.type;
         this.prevState = item.prevState;
-        this.dispatchedState = item.dispatchedState;
+        this.dispatchState = item.dispatchState;
         this.nextState = item.nextState;
         this.features = item.features;
         this.modules = item.modules;
