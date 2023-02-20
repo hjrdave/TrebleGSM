@@ -14,6 +14,8 @@ export interface StoreItem<TState = any, TKey = string> {
     type?: keyof typeof Types;
     features?: Features<TState, TKey>;
 }
+
+export type SetState<TState = any, TKey = string> = (key: TKey, state: TState | ((prevState: TState) => TState)) => void;
 export default class Store<TState = any, TKey = string> {
 
     private stateManager: Manager<any, TKey>;
@@ -37,15 +39,15 @@ export default class Store<TState = any, TKey = string> {
     }
 
     addItem = <TState = any>({ key, state, type, features }: StoreItem<TState, TKey>) => {
-        const parcel = this.dispatcher.createParcel({
+        const parcel = Dispatcher.createParcel({
             key: key,
             type: type,
-            prevState: state as any,
-            nextState: state as any,
-            features: features as any,
+            prevState: state,
+            nextState: state,
+            features: features,
             modules: this.moduleManager
         });
-        const middleware = this.dispatcher.runMiddleware(parcel, this.setState);
+        const middleware = Dispatcher.runMiddleware(parcel, this.setState);
         if (middleware.onTypeCheck()) {
             this.stateManager.add(parcel.getKey(), parcel.getNextState());
             this.typeManager.add(parcel.getKey(), parcel.getType());
@@ -53,8 +55,7 @@ export default class Store<TState = any, TKey = string> {
             middleware.onload();
             return
         }
-        const error = new Error({ code: ErrorCodes.WrongType, key: key, type: type });
-        error.throwConsoleError();
+        parcel.fail(ErrorCodes.WrongType);
     }
 
     getState = (key: TKey) => {
@@ -67,20 +68,19 @@ export default class Store<TState = any, TKey = string> {
     };
 
     setState = <TState = any>(key: TKey, state: TState | ((prevState: TState) => TState)) => {
-
         if (this.stateManager.has(key)) {
             //@ts-ignore
             const _state = (typeof state === 'function') ? state(this.getState(key) as TState) as TState : state as TState;
-            const parcel = this.dispatcher.createParcel({
+            const parcel = Dispatcher.createParcel({
                 key: key,
                 type: this.typeManager.get(key),
                 prevState: this.getState(key),
-                dispatchState: _state as any,
-                nextState: _state as any,
+                dispatchState: _state,
+                nextState: _state,
                 features: this.featureManager.get(key),
                 modules: this.moduleManager
             });
-            const middleware = this.dispatcher.runMiddleware(parcel, this.stateManager.update);
+            const middleware = Dispatcher.runMiddleware(parcel, this.stateManager.update);
             (middleware.onTypeCheck()) ? null : parcel.fail(ErrorCodes.WrongType);
             (middleware.shouldThisRerender()) ? null : parcel.fail(ErrorCodes.StateDidNotChange);
             (parcel.doesItemPass()) ? middleware.onRun() : null;

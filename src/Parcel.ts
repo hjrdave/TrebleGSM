@@ -4,7 +4,7 @@ import Module from "./Module";
 import Manager from "./Manager";
 import Error, { ErrorCodes } from "./Error";
 
-export interface IParcel<TState = any, TKey = string> {
+export interface ParcelProps<TState = any, TKey = string> {
     key: TKey,
     type?: keyof typeof Types,
     dispatchState?: TState;
@@ -74,7 +74,7 @@ export default class Parcel<TState = any, TKey = string> {
     }
 
 
-    public constructor(item: IParcel<TState, TKey>) {
+    public constructor(item: ParcelProps<TState, TKey>) {
         this.key = item.key;
         this.type = item.type;
         this.prevState = item.prevState;

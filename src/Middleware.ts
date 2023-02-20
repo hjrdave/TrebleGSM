@@ -1,6 +1,7 @@
 import TypeGuard, { Types } from "./TypeGuard";
 import Parcel from "./Parcel";
 import RenderGuard from "./RenderGuard";
+import { SetState } from "./Store";
 
 export default class Middleware<TState = any, TKey = string>{
 
@@ -55,7 +56,7 @@ export default class Middleware<TState = any, TKey = string>{
         });
     }
 
-    public constructor(parcel: Parcel<TState, TKey>, setState: (key: TKey, value: any) => void) {
+    public constructor(parcel: Parcel<TState, TKey>, setState: SetState<TState, TKey>) {
         this.parcel = parcel;
         this.setStoreState = setState;
     }

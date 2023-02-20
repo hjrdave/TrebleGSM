@@ -1,7 +1,7 @@
 import { default as Emitter } from "events";
 import Middleware from "./Middleware";
-import Parcel, { IParcel } from "./Parcel";
-
+import Parcel, { ParcelProps } from "./Parcel";
+import { SetState } from "./Store";
 export default class Dispatcher<TState = any, TKey = string> {
 
     private eventEmitter: Emitter;
@@ -21,11 +21,11 @@ export default class Dispatcher<TState = any, TKey = string> {
         this.parcel = parcel;
         this.eventEmitter.emit(parcel.getKey() as string);
     }
-    createParcel = (contents: IParcel<TState, TKey>) => {
+    static createParcel = <TState = any, TKey = string>(contents: ParcelProps<TState, TKey>) => {
         return new Parcel(contents);
     }
-    runMiddleware = (parcel: Parcel<TState, TKey>, setState: (key: TKey, value: any) => void) => {
-        return new Middleware(parcel, setState);
+    static runMiddleware = <TState = any, TKey = string>(parcel: Parcel<TState, TKey>, setState: SetState<TState, TKey>) => {
+        return new Middleware<TState, TKey>(parcel, setState);
     }
 
     public constructor() {
