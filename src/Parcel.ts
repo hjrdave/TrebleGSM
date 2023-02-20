@@ -11,6 +11,7 @@ export interface ParcelProps<TState = any, TKey = string> {
     prevState?: TState;
     nextState?: TState;
     doesPass?: boolean;
+    isInitial?: boolean;
     failCode?: ErrorCodes;
     failMsg?: string;
     features?: Features<TState, TKey>;
@@ -24,11 +25,20 @@ export default class Parcel<TState = any, TKey = string> {
     private prevState?: TState;
     private dispatchState?: TState;
     private nextState?: TState;
+    private isInitial = false;
     private doesPass = true;
     private failCode?: string;
     private failMsg?: string;
     private features?: Features<TState, TKey>;
     private modules?: Manager<Module<TState, TKey, []>, TKey>;
+
+    setIsInitial(isInitial: boolean) {
+        this.isInitial = isInitial;
+    }
+
+    getIsInitial() {
+        return this.isInitial;
+    }
 
     getKey() {
         return this.key;

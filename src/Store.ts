@@ -47,6 +47,7 @@ export default class Store<TState = any, TKey = string> {
             features: features,
             modules: this.moduleManager
         });
+        parcel.setIsInitial(true);
         const middleware = Dispatcher.runMiddleware(parcel, this.setState);
         if (middleware.onTypeCheck()) {
             this.stateManager.add(parcel.getKey(), parcel.getNextState());
