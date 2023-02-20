@@ -4,7 +4,7 @@ export enum Types {
     boolean = 'boolean',
     object = 'object',
     deepObject = 'deepObject',
-    array = 'array',
+    array = 'array'
 }
 
 export default class TypeGuard {

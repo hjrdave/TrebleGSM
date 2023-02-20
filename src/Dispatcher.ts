@@ -27,7 +27,6 @@ export default class Dispatcher<TState = any, TKey = string> {
     static runMiddleware = <TState = any, TKey = string>(parcel: Parcel<TState, TKey>, setState: SetState<TState, TKey>) => {
         return new Middleware<TState, TKey>(parcel, setState);
     }
-
     public constructor() {
         this.eventEmitter = new Emitter();
         this.eventEmitter.setMaxListeners(Number.MAX_SAFE_INTEGER);

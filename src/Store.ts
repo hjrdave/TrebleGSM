@@ -8,7 +8,7 @@ import Error, { ErrorCodes } from "./Error";
 import Features from "./Features";
 import Module from "./Module";
 
-export interface StoreItem<TState = any, TKey = string> {
+export interface StoreItemProps<TState = any, TKey = string> {
     key: TKey;
     state?: TState;
     type?: keyof typeof Types;
@@ -29,7 +29,7 @@ export default class Store<TState = any, TKey = string> {
     }
 
     getItems = () => {
-        const storeItems: StoreItem<any, TKey>[] = this.stateManager.getItems().map((item) => ({
+        const storeItems: StoreItemProps<any, TKey>[] = this.stateManager.getItems().map((item) => ({
             key: item[0],
             state: item[1],
             type: this.typeManager.get(item[0]),
@@ -38,7 +38,7 @@ export default class Store<TState = any, TKey = string> {
         return storeItems;
     }
 
-    addItem = <TState = any>({ key, state, type, features }: StoreItem<TState, TKey>) => {
+    addItem = <TState = any>({ key, state, type, features }: StoreItemProps<TState, TKey>) => {
         const parcel = Dispatcher.createParcel({
             key: key,
             type: type,
