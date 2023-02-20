@@ -7,8 +7,8 @@ import { default as IFeatures, FeatureOnCallback, FeatureOnRun, FeatureOnLoad } 
 import { SetState as ISetState } from "./Store";
 namespace TrebleGSM {
 
-    export function Store<TKey = string>() {
-        return new IStoreInstance<TKey>();
+    export function Store<TState=any, TKey = string>() {
+        return new IStoreInstance<TState, TKey>();
     }
     export type StoreInstance<TKey = string> = IStoreInstance<TKey>;
     export interface Features<TState = any, TKey = string> extends IFeatures<TState, TKey> { };
