@@ -52,18 +52,15 @@ export default class Store<TState = any, TKey = string> {
             this.stateManager.add(parcel.getKey(), parcel.getNextState());
             this.typeManager.add(parcel.getKey(), parcel.getType());
             this.featureManager.add(parcel.getKey(), parcel.getFeatures());
+            parcel.success();
             middleware.onload();
-            return
+        } else {
+            parcel.fail(ErrorCodes.WrongType);
         }
-        parcel.fail(ErrorCodes.WrongType);
+        middleware.onCallback();
     }
 
     getState = (key: TKey) => {
-        if (!this.stateManager.has(key)) {
-            const error = new Error({ code: ErrorCodes.StateDoesNotExist, key: key });
-            error.throwConsoleError();
-            return undefined;
-        };
         return this.stateManager.get(key);
     };
 

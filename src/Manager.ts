@@ -1,5 +1,4 @@
 import Inventory from "./Inventory";
-import Error, { ErrorCodes } from "./Error";
 
 export default class Manager<TItem = any, TKey = string> {
 
@@ -9,39 +8,41 @@ export default class Manager<TItem = any, TKey = string> {
         if (this.inventory.has(key)) {
             return this.inventory.get(key);
         }
-        const error = new Error({ code: ErrorCodes.StateDoesNotExist, key: key });
-        error.throwConsoleError();
         return undefined;
     }
 
     add = <TItem = any>(key: TKey, value: TItem) => {
         if (!this.inventory.has(key)) {
             this.inventory.set(key, value);
-        } else {
-            const error = new Error({ code: ErrorCodes.StateAlreadyExists, key: key });
-            error.throwConsoleError();
+            return true;
         }
+        return false;
     }
 
     update = <TItem = any>(key: TKey, value: TItem) => {
         if (this.inventory.has(key)) {
             this.inventory.set(key, value);
-        } else {
-            const error = new Error({ code: ErrorCodes.StateDoesNotExist, key: key });
-            error.throwConsoleError();
+            return true;
         }
+        return false;
     }
 
     remove = (key: TKey) => {
-        return this.inventory.delete(key);
+        if (this.inventory.has(key)) {
+            return this.inventory.delete(key);
+        }
+        return false;
     }
 
     removeAll = () => {
-        this.inventory.clear();
+        return this.inventory.clear();
     }
 
     getItems = () => {
-        return Array.from(this.inventory) as [TKey, TItem][];
+        if (this.inventory.size > 0) {
+            return Array.from(this.inventory) as [TKey, TItem][];
+        }
+        return [];
     }
 
     has = (key: TKey) => {

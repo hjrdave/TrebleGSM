@@ -69,10 +69,6 @@ export default class RenderGuard {
             return Guards['default']();
         }
     }
-
-    public constructor() {
-
-    }
 };
 
 

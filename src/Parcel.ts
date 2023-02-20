@@ -73,7 +73,6 @@ export default class Parcel<TState = any, TKey = string> {
         return this.doesPass;
     }
 
-
     public constructor(item: ParcelProps<TState, TKey>) {
         this.key = item.key;
         this.type = item.type;

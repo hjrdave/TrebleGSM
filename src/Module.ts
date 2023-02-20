@@ -1,8 +1,7 @@
-import TypeGuard from "./TypeGuard";
 import Parcel from "./Parcel";
 import { FeatureOnCallback, FeatureOnLoad, FeatureOnRun, FeatureOnTypeCheck } from "./Features";
 
-export interface ModuleItem<TState = any, TKey = string, TFeatureKeys = []> {
+export interface ModuleProps<TState = any, TKey = string, TFeatureKeys = []> {
     name: TKey,
     featureKeys?: TFeatureKeys,
     onTypeCheck?: FeatureOnTypeCheck<TState, TKey>;
@@ -38,7 +37,7 @@ export default class Module<TState = any, TKey = string, TFeatureKeys = []> {
     onCallback = (parcel: Parcel<TState, TKey>, setState: (key: TKey, value: any) => void) => {
         this.featureOnCallback?.(parcel, setState);
     }
-    public constructor(props: ModuleItem<TState, TKey, TFeatureKeys>) {
+    public constructor(props: ModuleProps<TState, TKey, TFeatureKeys>) {
         this.name = props.name;
         this.featureKeys = props.featureKeys;
         this.featureOnTypeCheck = props.onTypeCheck;
