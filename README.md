@@ -19,7 +19,7 @@ This is the core package. Even though this can be used as a stand alone package,
 
 import TrebleGSM from '@treblegsm/core';
 
-export const Store = new TrebleGSM();
+export const Store = TrebleGSM.Store();
 
 ```
 
