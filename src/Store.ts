@@ -3,7 +3,6 @@ import Parcel from "./Parcel";
 import { Types } from "./TypeGuard";
 import Inventory from "./Inventory";
 import Manager from "./Manager";
-import Middleware from "./Middleware";
 import Error, { ErrorCodes } from "./Error";
 import Features from "./Features";
 import Module from "./Module";
@@ -29,7 +28,7 @@ export default class Store<TState = any, TKey = string> {
     }
 
     getItems = () => {
-        const storeItems: StoreItemProps<any, TKey>[] = this.stateManager.getItems().map((item) => ({
+        const storeItems: StoreItemProps<any, TKey>[] = this.stateManager.getAll().map((item) => ({
             key: item[0],
             state: item[1],
             type: this.typeManager.get(item[0]),
@@ -45,15 +44,15 @@ export default class Store<TState = any, TKey = string> {
             prevState: state,
             nextState: state,
             features: features,
-            modules: this.moduleManager
+            modules: this.moduleManager as any
         });
         parcel.setIsInitial(true);
         const middleware = Dispatcher.runMiddleware(parcel, this.setState);
         if (middleware.onTypeCheck()) {
+            parcel.success();
             this.stateManager.add(parcel.getKey(), parcel.getNextState());
             this.typeManager.add(parcel.getKey(), parcel.getType());
             this.featureManager.add(parcel.getKey(), parcel.getFeatures());
-            parcel.success();
             middleware.onload();
         } else {
             parcel.fail(ErrorCodes.WrongType);
@@ -67,8 +66,7 @@ export default class Store<TState = any, TKey = string> {
 
     setState = <TState = any>(key: TKey, state: TState | ((prevState: TState) => TState)) => {
         if (this.stateManager.has(key)) {
-            //@ts-ignore
-            const _state = (typeof state === 'function') ? state(this.getState(key) as TState) as TState : state as TState;
+            const _state = (typeof state === 'function') ? (state as (prevState: TState) => TState)(this.getState(key) as TState) as TState : state as TState;
             const parcel = Dispatcher.createParcel({
                 key: key,
                 type: this.typeManager.get(key),
@@ -80,9 +78,9 @@ export default class Store<TState = any, TKey = string> {
             });
             const middleware = Dispatcher.runMiddleware(parcel, this.stateManager.update);
             (middleware.onTypeCheck()) ? null : parcel.fail(ErrorCodes.WrongType);
-            (middleware.shouldThisRerender()) ? null : parcel.fail(ErrorCodes.StateDidNotChange);
-            (parcel.doesItemPass()) ? middleware.onRun() : null;
+            (middleware.shouldParcelRerender()) ? null : parcel.fail(ErrorCodes.StateDidNotChange);
             (parcel.doesItemPass()) ? (
+                middleware.onRun(),
                 this.dispatcher.dispatch(parcel),
                 this.stateManager.update(parcel.getKey(), parcel.getNextState())
             ) : null;

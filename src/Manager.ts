@@ -38,7 +38,7 @@ export default class Manager<TItem = any, TKey = string> {
         return this.inventory.clear();
     }
 
-    getItems = () => {
+    getAll = () => {
         if (this.inventory.size > 0) {
             return Array.from(this.inventory) as [TKey, TItem][];
         }

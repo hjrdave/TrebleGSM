@@ -1,4 +1,4 @@
-import TypeGuard, { Types } from "./TypeGuard";
+import TypeGuard from "./TypeGuard";
 import Parcel from "./Parcel";
 import RenderGuard from "./RenderGuard";
 import { SetState } from "./Store";
@@ -6,16 +6,19 @@ import { SetState } from "./Store";
 export default class Middleware<TState = any, TKey = string>{
 
     private parcel: Parcel<TState, TKey>;
-    private setStoreState: (key: TKey, value: any) => void;
+    private setState: SetState<TState, TKey>;
 
-    shouldThisRerender = () => {
-        const parcel = this.parcel;
-        return (RenderGuard.stateCanRender(parcel.getPrevState(), parcel.getNextState(), parcel.getType()));
+    shouldParcelRerender = () => {
+        const prevState = this.parcel.getPrevState();
+        const nextState = this.parcel.getNextState();
+        const type = this.parcel.getType();
+        return (RenderGuard.stateCanRender(prevState, nextState, type));
     }
 
     onTypeCheck = () => {
-        const parcel = this.parcel;
-        if (!TypeGuard.isCorrectType(parcel.getNextState(), parcel.getType())) {
+        const nextState = this.parcel.getNextState();
+        const type = this.parcel.getType();
+        if (!TypeGuard.isCorrectType(nextState, type)) {
             return false;
         };
         return true;
@@ -25,37 +28,37 @@ export default class Middleware<TState = any, TKey = string>{
         const parcel = this.parcel;
         const modules = this.parcel.getModules();
         const features = parcel.getFeatures();
-        const setState = this.setStoreState;
-        features?.onLoad?.(parcel, setState);
+        const setState = this.setState;
         modules?.forEach((module) => {
-            module.onLoad(parcel, setState);
+            module?.onLoad?.(parcel, setState);
         });
+        features?.onLoad?.(parcel, setState);
     }
 
     onRun = () => {
         const parcel = this.parcel;
         const modules = this.parcel.getModules();
         const features = parcel.getFeatures();
-        features?.onRun?.(parcel);
         modules?.forEach((module) => {
-            module.onRun(parcel);
+            module?.onRun?.(parcel);
         });
+        features?.onRun?.(parcel);
     }
 
     onCallback = () => {
         const parcel = this.parcel;
         const modules = this.parcel.getModules();
         const features = parcel.getFeatures();
-        const setState = this.setStoreState;
-        features?.onCallback?.(parcel, setState);
+        const setState = this.setState;
         modules?.forEach((module) => {
-            module.onCallback(parcel, setState);
+            module?.onCallback?.(parcel, setState);
         });
+        features?.onCallback?.(parcel, setState);
     }
 
     public constructor(parcel: Parcel<TState, TKey>, setState: SetState<TState, TKey>) {
         this.parcel = parcel;
-        this.setStoreState = setState;
+        this.setState = setState;
     }
 }
 

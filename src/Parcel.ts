@@ -15,7 +15,7 @@ export interface ParcelProps<TState = any, TKey = string> {
     failCode?: ErrorCodes;
     failMsg?: string;
     features?: Features<TState, TKey>;
-    modules: Manager<Module<TState, TKey, []>, TKey>;
+    modules?: Manager<Module<TState, TKey, []>, TKey>;
 }
 
 export default class Parcel<TState = any, TKey = string> {
