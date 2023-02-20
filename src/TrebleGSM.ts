@@ -4,6 +4,7 @@ import { ParcelProps as IParcelProps } from "./Parcel";
 import { ModuleProps as IModuleProps } from "./Module";
 import { StoreItemProps as IStoreItemProps } from "./Store";
 import { default as IFeatures, FeatureOnCallback, FeatureOnRun, FeatureOnLoad } from "./Features";
+import { SetState as ISetState } from "./Store";
 namespace TrebleGSM {
 
     export function Store<TKey = string>() {
@@ -18,6 +19,7 @@ namespace TrebleGSM {
     export type OnRun<TState = any, TKey = string> = FeatureOnRun<TState, TKey>;
     export type OnCallback<TState = any, TKey = string> = FeatureOnCallback<TState, TKey>;
     export type StateTypes = TTypes;
+    export type SetState<TState = any, TKey = string> = ISetState<TState, TKey>;
 
 }
 export default TrebleGSM;
