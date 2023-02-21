@@ -53,7 +53,6 @@ export default class Store<TState = any, TKey = string> {
             this.stateManager.add(parcel.getKey(), parcel.getNextState());
             this.typeManager.add(parcel.getKey(), parcel.getType());
             this.featureManager.add(parcel.getKey(), parcel.getFeatures());
-            this.dispatcher.dispatch(parcel as any)
             middleware.onload();
         } else {
             parcel.fail(ErrorCodes.WrongType);
