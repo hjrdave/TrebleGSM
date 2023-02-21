@@ -1,4 +1,9 @@
+/**
+ * Parcel Class (Payload)
+ * This class hold data necessary for updating state and running middleware.
+ */
 import { Types } from "./TypeGuard";
+import Inventory from "./Inventory";
 import Features from "./Features";
 import Module from "./Module";
 import Manager from "./Manager";
@@ -10,12 +15,7 @@ export interface ParcelProps<TState = any, TKey = string> {
     dispatchState?: TState;
     prevState?: TState;
     nextState?: TState;
-    doesPass?: boolean;
-    isInitial?: boolean;
-    failCode?: ErrorCodes;
-    failMsg?: string;
     features?: Features<TState, TKey>;
-    modules?: Manager<Module<TState, TKey, []>, TKey>;
 }
 
 export default class Parcel<TState = any, TKey = string> {
@@ -25,21 +25,32 @@ export default class Parcel<TState = any, TKey = string> {
     private prevState?: TState;
     private dispatchState?: TState;
     private nextState?: TState;
-    private isInitial = false;
-    private doesPass = true;
-    private failCode?: string;
-    private failMsg?: string;
     private features?: Features<TState, TKey>;
-    private modules?: Manager<Module<TState, TKey, []>, TKey>;
+    private failReasons: Manager<{ code: ErrorCodes, msg: string }, ErrorCodes>;
+    private isInitialDispatch = false;
+    private doesPass = true;
 
-    setIsInitial(isInitial: boolean) {
-        this.isInitial = isInitial;
+    hasFailReason(code: ErrorCodes) {
+        return this.failReasons?.has(code);
+    }
+    addFailReason(code: ErrorCodes) {
+        const error = new Error({ code: code, key: this.key, type: this.type });
+        this.doesPass = false;
+        this.failReasons?.add(code, { code: code, msg: error.getMsg() });
+    }
+    getFailReason(code: ErrorCodes) {
+        return this.failReasons?.get(code);
+    }
+    getAllFailReasons() {
+        return this.failReasons?.getAll();
+    }
+    setIsInitialDispatch(isInitial: boolean) {
+        this.isInitialDispatch = isInitial;
     }
 
-    getIsInitial() {
-        return this.isInitial;
+    getIsInitialDispatch() {
+        return this.isInitialDispatch;
     }
-
     getKey() {
         return this.key;
     }
@@ -61,24 +72,6 @@ export default class Parcel<TState = any, TKey = string> {
     getFeatures() {
         return this.features;
     }
-    getModules() {
-        return this.modules;
-    }
-    getFailCode() {
-        return this.failCode;
-    }
-    getFailMsg() {
-        return this.failMsg;
-    }
-    fail(code: ErrorCodes) {
-        const error = new Error({ code: code, key: this.key, type: this.type });
-        this.failCode = error.getCode();
-        this.failMsg = error.getMsg();
-        this.doesPass = false;
-    }
-    success() {
-        this.doesPass = true;
-    }
     doesItemPass() {
         return this.doesPass;
     }
@@ -90,7 +83,7 @@ export default class Parcel<TState = any, TKey = string> {
         this.dispatchState = item.dispatchState;
         this.nextState = item.nextState;
         this.features = item.features;
-        this.modules = item.modules;
+        this.failReasons = new Manager(new Inventory);
     }
 };
 

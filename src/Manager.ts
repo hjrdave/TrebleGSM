@@ -1,3 +1,8 @@
+/**
+ * Manager Class
+ * This class handles the CRUD functionality of the Inventory. 
+ * It manages data flow in the Store.
+ */
 import Inventory from "./Inventory";
 
 export default class Manager<TItem = any, TKey = string> {

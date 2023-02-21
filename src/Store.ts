@@ -41,21 +41,19 @@ export default class Store<TState = any, TKey = string> {
         const parcel = Dispatcher.createParcel({
             key: key,
             type: type,
-            prevState: state,
+            dispatchState: state,
             nextState: state,
-            features: features,
-            modules: this.moduleManager as any
+            features: features
         });
-        parcel.setIsInitial(true);
-        const middleware = Dispatcher.runMiddleware(parcel, this.setState);
+        parcel.setIsInitialDispatch(true);
+        const middleware = Dispatcher.runMiddleware(parcel, this.setState, this.moduleManager as any);
         if (middleware.onTypeCheck()) {
-            parcel.success();
             this.stateManager.add(parcel.getKey(), parcel.getNextState());
             this.typeManager.add(parcel.getKey(), parcel.getType());
             this.featureManager.add(parcel.getKey(), parcel.getFeatures());
             middleware.onload();
         } else {
-            parcel.fail(ErrorCodes.WrongType);
+            parcel.addFailReason(ErrorCodes.WrongType);
         }
         middleware.onCallback();
     }
@@ -66,19 +64,20 @@ export default class Store<TState = any, TKey = string> {
 
     setState = <TState = any>(key: TKey, state: TState | ((prevState: TState) => TState)) => {
         if (this.stateManager.has(key)) {
+            //This is what immur will process
             const _state = (typeof state === 'function') ? (state as (prevState: TState) => TState)(this.getState(key) as TState) as TState : state as TState;
+            //
             const parcel = Dispatcher.createParcel({
                 key: key,
                 type: this.typeManager.get(key),
                 prevState: this.getState(key),
                 dispatchState: _state,
                 nextState: _state,
-                features: this.featureManager.get(key),
-                modules: this.moduleManager
+                features: this.featureManager.get(key)
             });
-            const middleware = Dispatcher.runMiddleware(parcel, this.stateManager.update);
-            (middleware.onTypeCheck()) ? null : parcel.fail(ErrorCodes.WrongType);
-            (middleware.shouldParcelRerender()) ? null : parcel.fail(ErrorCodes.StateDidNotChange);
+            const middleware = Dispatcher.runMiddleware(parcel, this.stateManager.update, this.moduleManager);
+            (middleware.onTypeCheck()) ? null : parcel.addFailReason(ErrorCodes.WrongType);
+            (middleware.shouldParcelRerender()) ? null : parcel.addFailReason(ErrorCodes.StateDidNotChange);
             (parcel.doesItemPass()) ? (
                 middleware.onRun(),
                 this.dispatcher.dispatch(parcel),

@@ -1,11 +1,18 @@
+/**
+ * Middleware Class
+ * This class handles all State manager middleware
+ */
 import TypeGuard from "./TypeGuard";
 import Parcel from "./Parcel";
+import Manager from "./Manager";
+import Module from "./Module";
 import RenderGuard from "./RenderGuard";
 import { SetState } from "./Store";
 
 export default class Middleware<TState = any, TKey = string>{
 
     private parcel: Parcel<TState, TKey>;
+    private modules: Manager<Module<TState, TKey, []>, TKey>;
     private setState: SetState<TState, TKey>;
 
     shouldParcelRerender = () => {
@@ -26,7 +33,7 @@ export default class Middleware<TState = any, TKey = string>{
 
     onload = () => {
         const parcel = this.parcel;
-        const modules = this.parcel.getModules();
+        const modules = this.modules;
         const features = parcel.getFeatures();
         const setState = this.setState;
         modules?.forEach((module) => {
@@ -37,7 +44,7 @@ export default class Middleware<TState = any, TKey = string>{
 
     onRun = () => {
         const parcel = this.parcel;
-        const modules = this.parcel.getModules();
+        const modules = this.modules;
         const features = parcel.getFeatures();
         modules?.forEach((module) => {
             module?.onRun?.(parcel);
@@ -47,7 +54,7 @@ export default class Middleware<TState = any, TKey = string>{
 
     onCallback = () => {
         const parcel = this.parcel;
-        const modules = this.parcel.getModules();
+        const modules = this.modules;
         const features = parcel.getFeatures();
         const setState = this.setState;
         modules?.forEach((module) => {
@@ -56,8 +63,9 @@ export default class Middleware<TState = any, TKey = string>{
         features?.onCallback?.(parcel, setState);
     }
 
-    public constructor(parcel: Parcel<TState, TKey>, setState: SetState<TState, TKey>) {
+    public constructor(parcel: Parcel<TState, TKey>, setState: SetState<TState, TKey>, modules: Manager<Module<TState, TKey, []>, TKey>) {
         this.parcel = parcel;
+        this.modules = modules;
         this.setState = setState;
     }
 }

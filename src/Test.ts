@@ -13,7 +13,7 @@ Store.addItem({
             console.log(`State "${key}: ${state}" was added to Store`);
         },
         onCallback: (parcel) => {
-            if (!parcel.getIsInitial()) {
+            if (!parcel.getIsInitialDispatch()) {
                 const state = parcel.getNextState();
                 const key = parcel.getKey();
                 console.log(`State "${key}" was updated to "${state}"`);
