@@ -16,7 +16,7 @@ export default class Manager<TItem = any, TKey = string> {
         return undefined;
     }
 
-    add = <TItem = any>(key: TKey, value: TItem) => {
+    add = (key: TKey, value: TItem) => {
         if (!this.inventory.has(key)) {
             this.inventory.set(key, value);
             return true;
@@ -24,7 +24,7 @@ export default class Manager<TItem = any, TKey = string> {
         return false;
     }
 
-    update = <TItem = any>(key: TKey, value: TItem) => {
+    update = (key: TKey, value: TItem) => {
         if (this.inventory.has(key)) {
             this.inventory.set(key, value);
             return true;
@@ -58,8 +58,8 @@ export default class Manager<TItem = any, TKey = string> {
         this.inventory.forEach(predicateFN);
     }
 
-    public constructor(inventory: Inventory<TItem, TKey>) {
-        this.inventory = inventory;
+    public constructor() {
+        this.inventory = new Inventory<TItem, TKey>();
     }
 };
 

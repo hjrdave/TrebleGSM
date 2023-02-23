@@ -3,12 +3,11 @@
  * This class hold data necessary for updating state and running middleware.
  */
 import { Types } from "./TypeGuard";
-import Inventory from "./Inventory";
 import Features from "./Features";
-import Module from "./Module";
 import Manager from "./Manager";
 import Error, { ErrorCodes } from "./Error";
 
+type FailReason = { code: ErrorCodes, msg: string };
 export interface ParcelProps<TState = any, TKey = string> {
     key: TKey,
     type?: keyof typeof Types,
@@ -26,7 +25,7 @@ export default class Parcel<TState = any, TKey = string> {
     private dispatchState?: TState;
     private nextState?: TState;
     private features?: Features<TState, TKey>;
-    private failReasons: Manager<{ code: ErrorCodes, msg: string }, ErrorCodes>;
+    private failReasons: Manager<FailReason, ErrorCodes>;
     private isInitialDispatch = false;
     private doesPass = true;
 
@@ -83,7 +82,7 @@ export default class Parcel<TState = any, TKey = string> {
         this.dispatchState = item.dispatchState;
         this.nextState = item.nextState;
         this.features = item.features;
-        this.failReasons = new Manager(new Inventory);
+        this.failReasons = new Manager<FailReason, ErrorCodes>();
     }
 };
 

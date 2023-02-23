@@ -96,11 +96,11 @@ export default class Store<TState = any, TKey = string> {
     }
 
     public constructor() {
-        this.stateManager = new Manager(new Inventory);
-        this.typeManager = new Manager(new Inventory);
-        this.featureManager = new Manager(new Inventory);
-        this.moduleManager = new Manager(new Inventory);
-        this.dispatcher = new Dispatcher();
+        this.stateManager = new Manager<any, TKey>();
+        this.typeManager = new Manager<Types, TKey>();
+        this.featureManager = new Manager<Features<any, TKey>, TKey>();
+        this.moduleManager = new Manager<Module<TState, TKey, []>, TKey>();
+        this.dispatcher = new Dispatcher<TState, TKey>();
     }
 };
 
