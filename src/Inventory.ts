@@ -7,7 +7,7 @@ export default class Inventory<TItem = any, TKey = string> extends Map {
     delete(key: TKey) {
         return super.delete(key);
     }
-    set(key: TKey, value: TItem) {
+    set(key: TKey, value?: TItem) {
         return super.set(key, value);
     }
     get(key: TKey) {
@@ -17,7 +17,7 @@ export default class Inventory<TItem = any, TKey = string> extends Map {
         return super.entries() as IterableIterator<[TKey, TItem]>
     }
     forEach(callbackfn: (value: TItem, key: TKey, map: Map<TKey, TItem>) => void, thisArg?: any): void {
-        return super.forEach(callbackfn);
+        return super.forEach(callbackfn, thisArg);
     }
     has(key: TKey) {
         return super.has(key);

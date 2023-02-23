@@ -10,17 +10,17 @@ import Error, { ErrorCodes } from "./Error";
 type FailReason = { code: ErrorCodes, msg: string };
 export interface ParcelProps<TState = any, TKey = string> {
     key: TKey,
-    type?: keyof typeof Types,
+    type?: keyof typeof Types;
     dispatchState?: TState;
     prevState?: TState;
     nextState?: TState;
     features?: Features<TState, TKey>;
 }
 
-export default class Parcel<TState = any, TKey = string> {
+export default class Parcel<TState = any | undefined, TKey = string> {
 
     private key: TKey;
-    private type?: keyof typeof Types;;
+    private type?: keyof typeof Types;
     private prevState?: TState;
     private dispatchState?: TState;
     private nextState?: TState;
@@ -46,7 +46,6 @@ export default class Parcel<TState = any, TKey = string> {
     setIsInitialDispatch(isInitial: boolean) {
         this.isInitialDispatch = isInitial;
     }
-
     getIsInitialDispatch() {
         return this.isInitialDispatch;
     }

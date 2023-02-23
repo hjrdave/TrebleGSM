@@ -1,7 +1,6 @@
 import Dispatcher from "./Dispatcher";
 import Parcel from "./Parcel";
 import { Types } from "./TypeGuard";
-import Inventory from "./Inventory";
 import Manager from "./Manager";
 import Error, { ErrorCodes } from "./Error";
 import Features from "./Features";
@@ -17,8 +16,8 @@ export interface StoreItemProps<TState = any, TKey = string> {
 export type SetState<TState = any, TKey = string> = (key: TKey, state: TState | ((prevState: TState) => TState)) => void;
 export default class Store<TState = any, TKey = string> {
 
-    private stateManager: Manager<any, TKey>;
-    private typeManager: Manager<Types, TKey>;
+    private stateManager: Manager<TState, TKey>;
+    private typeManager: Manager<keyof typeof Types, TKey>;
     private featureManager: Manager<Features<any, TKey>, TKey>;
     private moduleManager: Manager<Module<TState, TKey, []>, TKey>;
     private dispatcher: Dispatcher<TState, TKey>;
@@ -27,17 +26,16 @@ export default class Store<TState = any, TKey = string> {
         this.moduleManager.add(module.getName(), module);
     }
 
-    getItems = () => {
-        const storeItems: StoreItemProps<any, TKey>[] = this.stateManager.getAll().map((item) => ({
+    getItems = () => (
+        this.stateManager.getAll().map((item) => ({
             key: item[0],
             state: item[1],
             type: this.typeManager.get(item[0]),
             features: this.featureManager.get(item[0])
-        }));
-        return storeItems;
-    }
+        }))
+    )
 
-    addItem = <TState = any>({ key, state, type, features }: StoreItemProps<TState, TKey>) => {
+    addItem = ({ key, state, type, features }: StoreItemProps<TState, TKey>) => {
         const parcel = Dispatcher.createParcel({
             key: key,
             type: type,
@@ -46,7 +44,7 @@ export default class Store<TState = any, TKey = string> {
             features: features
         });
         parcel.setIsInitialDispatch(true);
-        const middleware = Dispatcher.runMiddleware(parcel, this.setState, this.moduleManager as any);
+        const middleware = Dispatcher.runMiddleware(parcel, this.setState, this.moduleManager);
         if (middleware.onTypeCheck()) {
             this.stateManager.add(parcel.getKey(), parcel.getNextState());
             this.typeManager.add(parcel.getKey(), parcel.getType());
@@ -62,7 +60,7 @@ export default class Store<TState = any, TKey = string> {
         return this.stateManager.get(key);
     };
 
-    setState = <TState = any>(key: TKey, state: TState | ((prevState: TState) => TState)) => {
+    setState = <TState = any>(key: TKey, state: TState | ((prevState: TState) => TState)): void => {
         if (this.stateManager.has(key)) {
             //This is what immur will process
             const _state = (typeof state === 'function') ? (state as (prevState: TState) => TState)(this.getState(key) as TState) as TState : state as TState;
@@ -75,7 +73,7 @@ export default class Store<TState = any, TKey = string> {
                 nextState: _state,
                 features: this.featureManager.get(key)
             });
-            const middleware = Dispatcher.runMiddleware(parcel, this.stateManager.update, this.moduleManager);
+            const middleware = Dispatcher.runMiddleware(parcel, this.setState, this.moduleManager);
             (middleware.onTypeCheck()) ? null : parcel.addFailReason(ErrorCodes.WrongType);
             (middleware.shouldParcelRerender()) ? null : parcel.addFailReason(ErrorCodes.StateDidNotChange);
             (parcel.doesItemPass()) ? (
@@ -97,7 +95,7 @@ export default class Store<TState = any, TKey = string> {
 
     public constructor() {
         this.stateManager = new Manager<any, TKey>();
-        this.typeManager = new Manager<Types, TKey>();
+        this.typeManager = new Manager<keyof typeof Types, TKey>();
         this.featureManager = new Manager<Features<any, TKey>, TKey>();
         this.moduleManager = new Manager<Module<TState, TKey, []>, TKey>();
         this.dispatcher = new Dispatcher<TState, TKey>();

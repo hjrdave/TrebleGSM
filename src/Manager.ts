@@ -1,5 +1,5 @@
 /**
- * Manager Class
+ * Manager Class,
  * This class handles the CRUD functionality of the Inventory. 
  * It manages data flow in the Store.
  */
@@ -16,7 +16,7 @@ export default class Manager<TItem = any, TKey = string> {
         return undefined;
     }
 
-    add = (key: TKey, value: TItem) => {
+    add = (key: TKey, value?: TItem) => {
         if (!this.inventory.has(key)) {
             this.inventory.set(key, value);
             return true;
@@ -24,7 +24,7 @@ export default class Manager<TItem = any, TKey = string> {
         return false;
     }
 
-    update = (key: TKey, value: TItem) => {
+    update = (key: TKey, value?: TItem) => {
         if (this.inventory.has(key)) {
             this.inventory.set(key, value);
             return true;
@@ -45,7 +45,7 @@ export default class Manager<TItem = any, TKey = string> {
 
     getAll = () => {
         if (this.inventory.size > 0) {
-            return Array.from(this.inventory) as [TKey, TItem][];
+            return Array.from(this.inventory.entries());
         }
         return [];
     }
