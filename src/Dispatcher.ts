@@ -16,18 +16,18 @@ export default class Dispatcher<TKeys = string, TStates = any, TFeatures = Featu
     private parcel?: Parcel<TKeys, TStates, TFeatures>;
 
     listen = <TStateType = any>(key: TKeys, callbackfn: (item: Parcel<TKeys, TStateType, TFeatures>) => void) => {
-        this.eventEmitter.on(key as string, () => {
+        this.eventEmitter.on(key, () => {
             if (this.parcel) {
-                callbackfn(this.parcel as any)
+                callbackfn(this.parcel)
             }
         });
     }
     stopListening = (key: TKeys) => {
-        this.eventEmitter.removeListener(key as string, () => null);
+        this.eventEmitter.removeListener(key, () => null);
     }
     dispatch = <TStateType = any>(parcel: Parcel<TKeys, TStateType, TFeatures>) => {
-        this.parcel = parcel as any;
-        this.eventEmitter.emit(parcel.getKey() as string);
+        this.parcel = parcel;
+        this.eventEmitter.emit(parcel.getKey());
     }
     static createParcel = <TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>>(contents: ParcelProps<TKeys, TStateType, TFeatures>) => {
         return new Parcel(contents);

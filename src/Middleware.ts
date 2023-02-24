@@ -13,8 +13,22 @@ import { SetState } from "./Store";
 export default class Middleware<TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>>{
 
     private parcel: Parcel<TKeys, TStateType, TFeatures>;
-    private modules: Manager<TKeys, Module<TKeys, TStateType, TFeatures>>;
+    private features?: TFeatures;
+    private modules?: Manager<TKeys, Module<TKeys, TStateType, TFeatures>>;
     private setState: SetState<TKeys, TStateType>;
+
+    private runModules = (type: 'onLoad' | 'onRun' | 'onCallback') => {
+        this.modules?.forEach((module) => {
+            (type === 'onRun') ?
+                module?.[type]?.(this.parcel) :
+                module?.[type]?.(this.parcel, this.setState);
+        })
+    }
+    private runFeatures = (type: 'onLoad' | 'onRun' | 'onCallback') => {
+        (type === 'onRun') ?
+            this.features?.[type]?.(this.parcel) :
+            this.features?.[type]?.(this.parcel, this.setState);
+    }
 
     shouldParcelRerender = () => {
         const prevState = this.parcel.getPrevState();
@@ -33,40 +47,24 @@ export default class Middleware<TKeys = string, TStateType = any, TFeatures = Fe
     }
 
     onload = () => {
-        const parcel = this.parcel;
-        const modules = this.modules;
-        const features = parcel.getFeatures();
-        const setState = this.setState;
-        modules?.forEach((module) => {
-            module?.onLoad?.(parcel, setState);
-        });
-        features?.onLoad?.(parcel, setState);
+        this.runModules('onLoad');
+        this.runFeatures('onLoad');
     }
 
     onRun = () => {
-        const parcel = this.parcel;
-        const modules = this.modules;
-        const features = parcel.getFeatures();
-        modules?.forEach((module) => {
-            module?.onRun?.(parcel);
-        });
-        features?.onRun?.(parcel);
+        this.runModules('onRun');
+        this.runFeatures('onRun');
     }
 
     onCallback = () => {
-        const parcel = this.parcel;
-        const modules = this.modules;
-        const features = parcel.getFeatures();
-        const setState = this.setState;
-        modules?.forEach((module) => {
-            module?.onCallback?.(parcel, setState);
-        });
-        features?.onCallback?.(parcel, setState);
+        this.runModules('onCallback');
+        this.runFeatures('onCallback');
     }
 
     public constructor(parcel: Parcel<TKeys, TStateType, TFeatures>, setState: SetState<TKeys, TStateType>, modules: Manager<TKeys, Module<TKeys, TStateType, TFeatures>>) {
         this.parcel = parcel;
         this.modules = modules;
+        this.features = parcel.getFeatures();
         this.setState = setState;
     }
 }

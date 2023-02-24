@@ -19,10 +19,10 @@ export default class Store<TKeys = string, TStates = any, TFeatures = Features<T
     private stateManager: Manager<TKeys, TStates>;
     private typeManager: Manager<TKeys, keyof typeof Types>;
     private featureManager: Manager<TKeys, TFeatures>;
-    private moduleManager: Manager<TKeys, Module<TKeys, TStates, TFeatures, string[]>>;
+    private moduleManager: Manager<TKeys, Module<TKeys, TStates, TFeatures>>;
     private dispatcher: Dispatcher<TKeys, TStates>;
 
-    use = (module: Module<TKeys, TStates, TFeatures, string[]>) => {
+    use = (module: Module<TKeys, TStates, TFeatures>) => {
         this.moduleManager.add(module.getName(), module);
     }
 
@@ -73,13 +73,13 @@ export default class Store<TKeys = string, TStates = any, TFeatures = Features<T
                 nextState: _state,
                 features: this.featureManager.get(key)
             });
-            const middleware = Dispatcher.runMiddleware(parcel, this.setState, this.moduleManager as any);
+            const middleware = Dispatcher.runMiddleware(parcel, this.setState, this.moduleManager);
             (middleware.onTypeCheck()) ? null : parcel.addFailReason(ErrorCodes.WrongType);
             (middleware.shouldParcelRerender()) ? null : parcel.addFailReason(ErrorCodes.StateDidNotChange);
             (parcel.doesItemPass()) ? (
                 middleware.onRun(),
-                this.dispatcher.dispatch(parcel as any),
-                this.stateManager.update(parcel.getKey(), parcel.getNextState() as TStates)
+                this.dispatcher.dispatch(parcel),
+                this.stateManager.update(parcel.getKey(), parcel.getNextState())
             ) : null;
             middleware.onCallback();
         } else {
@@ -90,14 +90,14 @@ export default class Store<TKeys = string, TStates = any, TFeatures = Features<T
 
     onDispatch = <TStateType = any>(callbackfn: (parcel: Parcel<TKeys, TStateType, TFeatures>) => void) => {
         this.stateManager.forEach((_, key) => this.dispatcher.stopListening(key));
-        this.stateManager.forEach((_, key) => this.dispatcher.listen<TStateType>(key, callbackfn as any));
+        this.stateManager.forEach((_, key) => this.dispatcher.listen<TStateType>(key, callbackfn));
     }
 
     public constructor() {
         this.stateManager = new Manager<TKeys, TStates>();
         this.typeManager = new Manager<TKeys, keyof typeof Types>();
         this.featureManager = new Manager<TKeys, TFeatures>();
-        this.moduleManager = new Manager<TKeys, Module<TKeys, TStates, TFeatures, string[]>>();
+        this.moduleManager = new Manager<TKeys, Module<TKeys, TStates, TFeatures>>();
         this.dispatcher = new Dispatcher<TKeys, TStates>();
     }
 };
