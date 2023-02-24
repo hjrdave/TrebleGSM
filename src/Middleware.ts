@@ -10,12 +10,12 @@ import RenderGuard from "./RenderGuard";
 import Features from "./Features";
 import { SetState } from "./Store";
 
-export default class Middleware<TKeys, TStateType, TFeatures>{
+export default class Middleware<TKeys, TStates, TFeatures extends Features<TKeys, TStates, TFeatures>>{
 
-    private parcel: Parcel<TKeys, TStateType, TFeatures>;
+    private parcel: Parcel<TKeys, TStates, TFeatures>;
     private features?: TFeatures;
-    private modules?: Manager<TKeys, Module<TKeys, TStateType, TFeatures>>;
-    private setState: SetState<TKeys, TStateType>;
+    private modules?: Manager<TKeys, Module<TKeys, TStates, TFeatures>>;
+    private setState: SetState<TKeys, TStates>;
 
     private runModules = (type: 'onLoad' | 'onRun' | 'onCallback') => {
         this.modules?.forEach((module) => {
@@ -61,7 +61,7 @@ export default class Middleware<TKeys, TStateType, TFeatures>{
         this.runFeatures('onCallback');
     }
 
-    public constructor(parcel: Parcel<TKeys, TStateType, TFeatures>, setState: SetState<TKeys, TStateType>, modules: Manager<TKeys, Module<TKeys, TStateType, TFeatures>>) {
+    public constructor(parcel: Parcel<TKeys, TStates, TFeatures>, setState: SetState<TKeys, TStates>, modules: Manager<TKeys, Module<TKeys, TStates, TFeatures>>) {
         this.parcel = parcel;
         this.modules = modules;
         this.features = parcel.getFeatures();
