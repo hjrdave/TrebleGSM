@@ -7,13 +7,14 @@ import Parcel from "./Parcel";
 import Manager from "./Manager";
 import Module from "./Module";
 import RenderGuard from "./RenderGuard";
+import Features from "./Features";
 import { SetState } from "./Store";
 
-export default class Middleware<TState = any, TKey = string>{
+export default class Middleware<TStates = any, TKeys = string, TFeatures = Features<TStates, TKeys>>{
 
-    private parcel: Parcel<TState, TKey>;
-    private modules: Manager<Module<TState, TKey, []>, TKey>;
-    private setState: SetState<TState, TKey>;
+    private parcel: Parcel<TStates, TKeys, TFeatures>;
+    private modules: Manager<Module<TStates, TKeys, TFeatures>, TKeys>;
+    private setState: SetState<TStates, TKeys>;
 
     shouldParcelRerender = () => {
         const prevState = this.parcel.getPrevState();
@@ -63,7 +64,7 @@ export default class Middleware<TState = any, TKey = string>{
         features?.onCallback?.(parcel, setState);
     }
 
-    public constructor(parcel: Parcel<TState, TKey>, setState: SetState<TState, TKey>, modules: Manager<Module<TState, TKey, []>, TKey>) {
+    public constructor(parcel: Parcel<TStates, TKeys, TFeatures>, setState: SetState<TStates, TKeys>, modules: Manager<Module<TStates, TKeys, TFeatures>, TKeys>) {
         this.parcel = parcel;
         this.modules = modules;
         this.setState = setState;

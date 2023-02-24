@@ -8,23 +8,23 @@ import Manager from "./Manager";
 import Error, { ErrorCodes } from "./Error";
 
 type FailReason = { code: ErrorCodes, msg: string };
-export interface ParcelProps<TState = any, TKey = string> {
-    key: TKey,
+export interface ParcelProps<TStates = any, TKeys = string, TFeatures = Features<TStates, TKeys>> {
+    key: TKeys,
     type?: keyof typeof Types;
-    dispatchState?: TState;
-    prevState?: TState;
-    nextState?: TState;
-    features?: Features<TState, TKey>;
+    dispatchState?: TStates;
+    prevState?: TStates;
+    nextState?: TStates;
+    features?: TFeatures;
 }
 
-export default class Parcel<TState = any | undefined, TKey = string> {
+export default class Parcel<TStates = any | undefined, TKeys = string, TFeatures = Features<TStates, TKeys>> {
 
-    private key: TKey;
+    private key: TKeys;
     private type?: keyof typeof Types;
-    private prevState?: TState;
-    private dispatchState?: TState;
-    private nextState?: TState;
-    private features?: Features<TState, TKey>;
+    private prevState?: TStates;
+    private dispatchState?: TStates;
+    private nextState?: TStates;
+    private features?: TFeatures;
     private failReasons: Manager<FailReason, ErrorCodes>;
     private isInitialDispatch = false;
     private doesPass = true;
@@ -64,7 +64,7 @@ export default class Parcel<TState = any | undefined, TKey = string> {
     getNextState() {
         return this.nextState;
     }
-    setNextState(nextState: TState) {
+    setNextState(nextState: TStates) {
         this.nextState = nextState;
     }
     getFeatures() {
@@ -74,7 +74,7 @@ export default class Parcel<TState = any | undefined, TKey = string> {
         return this.doesPass;
     }
 
-    public constructor(item: ParcelProps<TState, TKey>) {
+    public constructor(item: ParcelProps<TStates, TKeys, TFeatures>) {
         this.key = item.key;
         this.type = item.type;
         this.prevState = item.prevState;
