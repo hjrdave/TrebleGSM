@@ -1,17 +1,17 @@
 import Parcel from "./Parcel";
 import { SetState } from "./Store";
 
-export type FeatureOnTypeCheck<TState = any, TKey = string, TFeatures = Features<TState, TKey>> = (parcel: Parcel<TState, TKey, TFeatures>) => boolean;
+export type FeatureOnTypeCheck<TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>> = (parcel: Parcel<TKeys, TStateType, TFeatures>) => boolean;
 
-export type FeatureOnLoad<TState = any, TKey = string, TFeatures = Features<TState, TKey>> = (parcel: Parcel<TState, TKey, TFeatures>, setState: SetState<TState, TKey>) => void;
+export type FeatureOnLoad<TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>> = (parcel: Parcel<TKeys, TStateType, TFeatures>, setState: SetState<TKeys, TStateType>) => void;
 
-export type FeatureOnRun<TState = any, TKey = string, TFeatures = Features<TState, TKey>> = (parcel: Parcel<TState, TKey, TFeatures>) => void;
+export type FeatureOnRun<TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>> = (parcel: Parcel<TKeys, TStateType, TFeatures>) => void;
 
-export type FeatureOnCallback<TState = any, TKey = string, TFeatures = Features<TState, TKey>> = (parcel: Parcel<TState, TKey, TFeatures>, setState: SetState<TState, TKey>) => void;
+export type FeatureOnCallback<TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>> = (parcel: Parcel<TKeys, TStateType, TFeatures>, setState: SetState<TKeys, TStateType>) => void;
 
-export default interface Features<TState = any, TKey = string> {
-    onTypeCheck?: FeatureOnTypeCheck<TState, TKey>
-    onLoad?: FeatureOnLoad<TState, TKey>;
-    onRun?: FeatureOnRun<TState, TKey>;
-    onCallback?: FeatureOnCallback<TState, TKey>;
+export default interface Features<TKeys = string, TStateType = any> {
+    onTypeCheck?: FeatureOnTypeCheck<TKeys, TStateType>
+    onLoad?: FeatureOnLoad<TKeys, TStateType>;
+    onRun?: FeatureOnRun<TKeys, TStateType>;
+    onCallback?: FeatureOnCallback<TKeys, TStateType>;
 }

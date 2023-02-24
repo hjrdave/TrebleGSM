@@ -3,23 +3,23 @@ import { Types as TTypes } from "./TypeGuard";
 import { ParcelProps as IParcelProps } from "./Parcel";
 import { ModuleProps as IModuleProps } from "./Module";
 import { StoreItemProps as IStoreItemProps } from "./Store";
-import { default as IFeatures, FeatureOnCallback, FeatureOnRun, FeatureOnLoad } from "./Features";
+import Features, { default as IFeatures, FeatureOnCallback, FeatureOnRun, FeatureOnLoad } from "./Features";
 import { SetState as ISetState } from "./Store";
 namespace TrebleGSM {
 
-    export function Store<TState = any, TKey = string>() {
-        return new IStoreInstance<TState, TKey>();
+    export function Store<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>>() {
+        return new IStoreInstance<TKeys, TStates, TFeatures>();
     }
-    export type StoreInstance<TState = any, TKey = string> = IStoreInstance<TState, TKey>;
-    export interface Features<TState = any, TKey = string> extends IFeatures<TState, TKey> { };
-    export interface StoreItemProps<TState = any, TKey = string> extends IStoreItemProps<TState, TKey> { };
-    export interface ParcelProps<TState = any, TKey = string> extends IParcelProps<TState, TKey> { };
-    export interface ModuleProps<TState = any, TKey = string> extends IModuleProps<TState, TKey> { };
-    export type OnLoad<TState = any, TKey = string> = FeatureOnLoad<TState, TKey>;
-    export type OnRun<TState = any, TKey = string> = FeatureOnRun<TState, TKey>;
-    export type OnCallback<TState = any, TKey = string> = FeatureOnCallback<TState, TKey>;
+    export type StoreInstance<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> = IStoreInstance<TKeys, TStates, TFeatures>;
+    export interface Features<TKeys = string, TStates = any> extends IFeatures<TKeys, TStates> { };
+    export interface StoreItemProps<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> extends IStoreItemProps<TKeys, TStates, TFeatures> { };
+    export interface ParcelProps<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> extends IParcelProps<TKeys, TStates, TFeatures> { };
+    export interface ModuleProps<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> extends IModuleProps<TKeys, TStates, TFeatures> { };
+    export type OnLoad<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> = FeatureOnLoad<TKeys, TStates, TFeatures>;
+    export type OnRun<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> = FeatureOnRun<TKeys, TStates, TFeatures>;
+    export type OnCallback<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> = FeatureOnCallback<TKeys, TStates, TFeatures>;
     export type StateTypes = TTypes;
-    export type SetState<TState = any, TKey = string> = ISetState<TState, TKey>;
+    export type SetState<TKeys = string, TStates = any> = ISetState<TKeys, TStates>;
 
 }
 export default TrebleGSM;

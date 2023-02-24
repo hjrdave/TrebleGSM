@@ -3,30 +3,30 @@
  * This is an extension of the JS Map class. It allows for Map functions to be typed easier.
  * It is the base data structure for Store state
  */
-export default class Inventory<TItem = any, TKey = string> extends Map {
-    delete(key: TKey) {
+export default class Inventory<TKeys = string, TValues = any> extends Map {
+    delete(key: TKeys) {
         return super.delete(key);
     }
-    set(key: TKey, value?: TItem) {
+    set(key: TKeys, value?: TValues) {
         return super.set(key, value);
     }
-    get(key: TKey) {
-        return super.get(key) as TItem;
+    get(key: TKeys) {
+        return super.get(key) as TValues;
     }
     entries() {
-        return super.entries() as IterableIterator<[TKey, TItem]>
+        return super.entries() as IterableIterator<[TKeys, TValues]>
     }
-    forEach(callbackfn: (value: TItem, key: TKey, map: Map<TKey, TItem>) => void, thisArg?: any): void {
+    forEach(callbackfn: (value: TValues, key: TKeys, map: Map<TKeys, TValues>) => void, thisArg?: any): void {
         return super.forEach(callbackfn, thisArg);
     }
-    has(key: TKey) {
+    has(key: TKeys) {
         return super.has(key);
     }
     keys() {
-        return super.keys() as IterableIterator<TKey>
+        return super.keys() as IterableIterator<TKeys>
     }
     values() {
-        return super.values() as IterableIterator<TItem>;
+        return super.values() as IterableIterator<TValues>;
     }
 };
 

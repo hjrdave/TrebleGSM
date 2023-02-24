@@ -6,23 +6,23 @@ import Error, { ErrorCodes } from "./Error";
 import Features from "./Features";
 import Module from "./Module";
 
-export interface StoreItemProps<TStates = any, TKeys = string, TFeatures = Features<TStates, TKeys>> {
+export interface StoreItemProps<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> {
     key: TKeys;
     state?: TStates;
     type?: keyof typeof Types;
     features?: TFeatures;
 }
 
-export type SetState<TStates = any, TKey = string> = (key: TKey, state: TStates | ((prevState: TStates) => TStates)) => void;
-export default class Store<TKeys = string, TStates = any, TFeatures = Features<TStates, TKeys>> {
+export type SetState<TKey = string, TStateType = any> = (key: TKey, state: TStateType | ((prevState: TStateType) => TStateType)) => void;
+export default class Store<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> {
 
-    private stateManager: Manager<TStates, TKeys>;
-    private typeManager: Manager<keyof typeof Types, TKeys>;
-    private featureManager: Manager<TFeatures, TKeys>;
-    private moduleManager: Manager<Module<TStates, TKeys, []>, TKeys>;
-    private dispatcher: Dispatcher<TStates, TKeys>;
+    private stateManager: Manager<TKeys, TStates>;
+    private typeManager: Manager<TKeys, keyof typeof Types>;
+    private featureManager: Manager<TKeys, TFeatures>;
+    private moduleManager: Manager<TKeys, Module<TKeys, TStates, TFeatures, string[]>>;
+    private dispatcher: Dispatcher<TKeys, TStates>;
 
-    use = (module: Module<TStates, TKeys, []>) => {
+    use = (module: Module<TKeys, TStates, TFeatures, string[]>) => {
         this.moduleManager.add(module.getName(), module);
     }
 
@@ -35,7 +35,7 @@ export default class Store<TKeys = string, TStates = any, TFeatures = Features<T
         }))
     )
 
-    addItem = ({ key, state, type, features }: StoreItemProps<TStates, TKeys, TFeatures>) => {
+    addItem = ({ key, state, type, features }: StoreItemProps<TKeys, TStates, TFeatures>) => {
         const parcel = Dispatcher.createParcel({
             key: key,
             type: type,
@@ -56,30 +56,30 @@ export default class Store<TKeys = string, TStates = any, TFeatures = Features<T
         middleware.onCallback();
     }
 
-    getState = (key: TKeys) => {
-        return this.stateManager.get(key);
+    getState = <TStateType = any>(key: TKeys) => {
+        return this.stateManager.get(key) as TStateType;
     };
 
-    setState = <TStates = any>(key: TKeys, state: TStates | ((prevState: TStates) => TStates)): void => {
+    setState = <TStateType = any | undefined>(key: TKeys, state: TStateType | ((prevState: TStateType) => TStateType)): void => {
         if (this.stateManager.has(key)) {
             //This is what immur will process
-            const _state = (typeof state === 'function') ? (state as (prevState: TStates) => TStates)(this.getState(key) as TStates) as TStates : state as TStates;
+            const _state = (typeof state === 'function') ? (state as (prevState: TStateType) => TStateType)(this.getState(key) as TStateType) as TStateType : state as TStateType;
             //
-            const parcel = Dispatcher.createParcel({
+            const parcel = Dispatcher.createParcel<TKeys, TStateType, TFeatures>({
                 key: key,
                 type: this.typeManager.get(key),
-                prevState: this.getState(key),
+                prevState: this.getState<TStateType>(key),
                 dispatchState: _state,
                 nextState: _state,
                 features: this.featureManager.get(key)
             });
-            const middleware = Dispatcher.runMiddleware(parcel, this.setState, this.moduleManager);
+            const middleware = Dispatcher.runMiddleware(parcel, this.setState, this.moduleManager as any);
             (middleware.onTypeCheck()) ? null : parcel.addFailReason(ErrorCodes.WrongType);
             (middleware.shouldParcelRerender()) ? null : parcel.addFailReason(ErrorCodes.StateDidNotChange);
             (parcel.doesItemPass()) ? (
                 middleware.onRun(),
-                this.dispatcher.dispatch(parcel),
-                this.stateManager.update(parcel.getKey(), parcel.getNextState())
+                this.dispatcher.dispatch(parcel as any),
+                this.stateManager.update(parcel.getKey(), parcel.getNextState() as TStates)
             ) : null;
             middleware.onCallback();
         } else {
@@ -88,17 +88,17 @@ export default class Store<TKeys = string, TStates = any, TFeatures = Features<T
         }
     };
 
-    onDispatch = (callbackfn: (parcel: Parcel<TStates, TKeys>) => void) => {
+    onDispatch = <TStateType = any>(callbackfn: (parcel: Parcel<TKeys, TStateType, TFeatures>) => void) => {
         this.stateManager.forEach((_, key) => this.dispatcher.stopListening(key));
-        this.stateManager.forEach((_, key) => this.dispatcher.listen(key, callbackfn));
+        this.stateManager.forEach((_, key) => this.dispatcher.listen<TStateType>(key, callbackfn as any));
     }
 
     public constructor() {
-        this.stateManager = new Manager<any, TKeys>();
-        this.typeManager = new Manager<keyof typeof Types, TKeys>();
-        this.featureManager = new Manager<TFeatures, TKeys>();
-        this.moduleManager = new Manager<Module<TStates, TKeys, any>, TKeys>();
-        this.dispatcher = new Dispatcher<TStates, TKeys>();
+        this.stateManager = new Manager<TKeys, TStates>();
+        this.typeManager = new Manager<TKeys, keyof typeof Types>();
+        this.featureManager = new Manager<TKeys, TFeatures>();
+        this.moduleManager = new Manager<TKeys, Module<TKeys, TStates, TFeatures, string[]>>();
+        this.dispatcher = new Dispatcher<TKeys, TStates>();
     }
 };
 

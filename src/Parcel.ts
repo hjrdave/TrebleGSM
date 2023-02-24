@@ -8,24 +8,24 @@ import Manager from "./Manager";
 import Error, { ErrorCodes } from "./Error";
 
 type FailReason = { code: ErrorCodes, msg: string };
-export interface ParcelProps<TStates = any, TKeys = string, TFeatures = Features<TStates, TKeys>> {
+export interface ParcelProps<TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>> {
     key: TKeys,
     type?: keyof typeof Types;
-    dispatchState?: TStates;
-    prevState?: TStates;
-    nextState?: TStates;
+    dispatchState?: TStateType;
+    prevState?: TStateType;
+    nextState?: TStateType;
     features?: TFeatures;
 }
 
-export default class Parcel<TStates = any | undefined, TKeys = string, TFeatures = Features<TStates, TKeys>> {
+export default class Parcel<TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>> {
 
     private key: TKeys;
     private type?: keyof typeof Types;
-    private prevState?: TStates;
-    private dispatchState?: TStates;
-    private nextState?: TStates;
+    private prevState?: TStateType;
+    private dispatchState?: TStateType;
+    private nextState?: TStateType;
     private features?: TFeatures;
-    private failReasons: Manager<FailReason, ErrorCodes>;
+    private failReasons: Manager<ErrorCodes, FailReason>;
     private isInitialDispatch = false;
     private doesPass = true;
 
@@ -64,7 +64,7 @@ export default class Parcel<TStates = any | undefined, TKeys = string, TFeatures
     getNextState() {
         return this.nextState;
     }
-    setNextState(nextState: TStates) {
+    setNextState(nextState: TStateType) {
         this.nextState = nextState;
     }
     getFeatures() {
@@ -74,14 +74,14 @@ export default class Parcel<TStates = any | undefined, TKeys = string, TFeatures
         return this.doesPass;
     }
 
-    public constructor(item: ParcelProps<TStates, TKeys, TFeatures>) {
+    public constructor(item: ParcelProps<TKeys, TStateType, TFeatures>) {
         this.key = item.key;
         this.type = item.type;
         this.prevState = item.prevState;
         this.dispatchState = item.dispatchState;
         this.nextState = item.nextState;
         this.features = item.features;
-        this.failReasons = new Manager<FailReason, ErrorCodes>();
+        this.failReasons = new Manager<ErrorCodes, FailReason>();
     }
 };
 

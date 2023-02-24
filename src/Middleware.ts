@@ -10,11 +10,11 @@ import RenderGuard from "./RenderGuard";
 import Features from "./Features";
 import { SetState } from "./Store";
 
-export default class Middleware<TStates = any, TKeys = string, TFeatures = Features<TStates, TKeys>>{
+export default class Middleware<TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>>{
 
-    private parcel: Parcel<TStates, TKeys, TFeatures>;
-    private modules: Manager<Module<TStates, TKeys, TFeatures>, TKeys>;
-    private setState: SetState<TStates, TKeys>;
+    private parcel: Parcel<TKeys, TStateType, TFeatures>;
+    private modules: Manager<TKeys, Module<TKeys, TStateType, TFeatures>>;
+    private setState: SetState<TKeys, TStateType>;
 
     shouldParcelRerender = () => {
         const prevState = this.parcel.getPrevState();
@@ -64,7 +64,7 @@ export default class Middleware<TStates = any, TKeys = string, TFeatures = Featu
         features?.onCallback?.(parcel, setState);
     }
 
-    public constructor(parcel: Parcel<TStates, TKeys, TFeatures>, setState: SetState<TStates, TKeys>, modules: Manager<Module<TStates, TKeys, TFeatures>, TKeys>) {
+    public constructor(parcel: Parcel<TKeys, TStateType, TFeatures>, setState: SetState<TKeys, TStateType>, modules: Manager<TKeys, Module<TKeys, TStateType, TFeatures>>) {
         this.parcel = parcel;
         this.modules = modules;
         this.setState = setState;

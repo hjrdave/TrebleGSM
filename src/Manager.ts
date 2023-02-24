@@ -5,18 +5,18 @@
  */
 import Inventory from "./Inventory";
 
-export default class Manager<TItem = any, TKey = string> {
+export default class Manager<TKeys = string, TValues = any> {
 
-    private inventory: Inventory<TItem, TKey>;
+    private inventory: Inventory<TKeys, TValues>;
 
-    get = (key: TKey) => {
+    get = (key: TKeys) => {
         if (this.inventory.has(key)) {
             return this.inventory.get(key);
         }
         return undefined;
     }
 
-    add = (key: TKey, value?: TItem) => {
+    add = (key: TKeys, value?: TValues) => {
         if (!this.inventory.has(key)) {
             this.inventory.set(key, value);
             return true;
@@ -24,7 +24,7 @@ export default class Manager<TItem = any, TKey = string> {
         return false;
     }
 
-    update = (key: TKey, value?: TItem) => {
+    update = (key: TKeys, value?: TValues) => {
         if (this.inventory.has(key)) {
             this.inventory.set(key, value);
             return true;
@@ -32,7 +32,7 @@ export default class Manager<TItem = any, TKey = string> {
         return false;
     }
 
-    remove = (key: TKey) => {
+    remove = (key: TKeys) => {
         if (this.inventory.has(key)) {
             return this.inventory.delete(key);
         }
@@ -50,16 +50,16 @@ export default class Manager<TItem = any, TKey = string> {
         return [];
     }
 
-    has = (key: TKey) => {
+    has = (key: TKeys) => {
         return this.inventory.has(key);
     }
 
-    forEach = (predicateFN: (value: TItem, key: TKey) => void) => {
+    forEach = (predicateFN: (value: TValues, key: TKeys) => void) => {
         this.inventory.forEach(predicateFN);
     }
 
     public constructor() {
-        this.inventory = new Inventory<TItem, TKey>();
+        this.inventory = new Inventory<TKeys, TValues>();
     }
 };
 
