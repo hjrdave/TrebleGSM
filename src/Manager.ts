@@ -5,9 +5,9 @@
  */
 import Inventory from "./Inventory";
 
-export default class Manager<TKeys = string, TValues = any> {
+export default class Manager<TKeys, TValue> {
 
-    private inventory: Inventory<TKeys, TValues>;
+    private inventory: Inventory<TKeys, TValue>;
 
     get = (key: TKeys) => {
         if (this.inventory.has(key)) {
@@ -16,7 +16,7 @@ export default class Manager<TKeys = string, TValues = any> {
         return undefined;
     }
 
-    add = (key: TKeys, value?: TValues) => {
+    add = (key: TKeys, value?: TValue) => {
         if (!this.inventory.has(key)) {
             this.inventory.set(key, value);
             return true;
@@ -24,7 +24,7 @@ export default class Manager<TKeys = string, TValues = any> {
         return false;
     }
 
-    update = (key: TKeys, value?: TValues) => {
+    update = (key: TKeys, value?: TValue) => {
         if (this.inventory.has(key)) {
             this.inventory.set(key, value);
             return true;
@@ -54,12 +54,12 @@ export default class Manager<TKeys = string, TValues = any> {
         return this.inventory.has(key);
     }
 
-    forEach = (predicateFN: (value: TValues, key: TKeys) => void) => {
+    forEach = (predicateFN: (value: TValue, key: TKeys) => void) => {
         this.inventory.forEach(predicateFN);
     }
 
     public constructor() {
-        this.inventory = new Inventory<TKeys, TValues>();
+        this.inventory = new Inventory<TKeys, TValue>();
     }
 };
 

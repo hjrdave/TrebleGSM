@@ -7,7 +7,7 @@ export enum ErrorCodes {
     StateAlreadyExists = 'StateAlreadyExists'
 }
 
-export default class Error<TKey = string> {
+export default class Error<TKey> {
 
     private code: ErrorCodes;
     private stateKey?: TKey;

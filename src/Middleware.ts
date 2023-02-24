@@ -10,7 +10,7 @@ import RenderGuard from "./RenderGuard";
 import Features from "./Features";
 import { SetState } from "./Store";
 
-export default class Middleware<TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>>{
+export default class Middleware<TKeys, TStateType, TFeatures>{
 
     private parcel: Parcel<TKeys, TStateType, TFeatures>;
     private features?: TFeatures;

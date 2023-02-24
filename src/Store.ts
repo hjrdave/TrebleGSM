@@ -6,21 +6,21 @@ import Error, { ErrorCodes } from "./Error";
 import Features from "./Features";
 import Module from "./Module";
 
-export interface StoreItemProps<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> {
+export interface StoreItemProps<TKeys, TStates, TFeatures> {
     key: TKeys;
     state?: TStates;
     type?: keyof typeof Types;
     features?: TFeatures;
 }
 
-export type SetState<TKey = string, TStateType = any> = (key: TKey, state: TStateType | ((prevState: TStateType) => TStateType)) => void;
-export default class Store<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> {
+export type SetState<TKey, TStateType> = (key: TKey, state: TStateType | ((prevState: TStateType) => TStateType)) => void;
+export default class Store<TKeys, TStates, TFeatures> {
 
-    private stateManager: Manager<TKeys, TStates>;
+    private stateManager: Manager<TKeys, { [K in keyof TStates]: TStates[K]; }>;
     private typeManager: Manager<TKeys, keyof typeof Types>;
     private featureManager: Manager<TKeys, TFeatures>;
     private moduleManager: Manager<TKeys, Module<TKeys, TStates, TFeatures>>;
-    private dispatcher: Dispatcher<TKeys, TStates>;
+    private dispatcher: Dispatcher<TKeys, TStates, TFeatures>;
 
     use = (module: Module<TKeys, TStates, TFeatures>) => {
         this.moduleManager.add(module.getName(), module);
@@ -56,11 +56,11 @@ export default class Store<TKeys = string, TStates = any, TFeatures = Features<T
         middleware.onCallback();
     }
 
-    getState = <TStateType = any>(key: TKeys) => {
+    getState = <TStateType>(key: TKeys) => {
         return this.stateManager.get(key) as TStateType;
     };
 
-    setState = <TStateType = any | undefined>(key: TKeys, state: TStateType | ((prevState: TStateType) => TStateType)): void => {
+    setState = <TStateType>(key: TKeys, state: TStateType | ((prevState: TStateType) => TStateType)): void => {
         if (this.stateManager.has(key)) {
             //This is what immur will process
             const _state = (typeof state === 'function') ? (state as (prevState: TStateType) => TStateType)(this.getState(key) as TStateType) as TStateType : state as TStateType;
@@ -98,7 +98,7 @@ export default class Store<TKeys = string, TStates = any, TFeatures = Features<T
         this.typeManager = new Manager<TKeys, keyof typeof Types>();
         this.featureManager = new Manager<TKeys, TFeatures>();
         this.moduleManager = new Manager<TKeys, Module<TKeys, TStates, TFeatures>>();
-        this.dispatcher = new Dispatcher<TKeys, TStates>();
+        this.dispatcher = new Dispatcher<TKeys, TStates, TFeatures>();
     }
 };
 

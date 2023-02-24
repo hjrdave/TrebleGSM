@@ -3,7 +3,7 @@
  * This is an extension of the JS Map class. It allows for Map functions to be typed easier.
  * It is the base data structure for Store state
  */
-export default class Inventory<TKeys = string, TValues = any> extends Map {
+export default class Inventory<TKeys, TValues> extends Map {
     delete(key: TKeys) {
         return super.delete(key);
     }

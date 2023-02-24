@@ -7,15 +7,15 @@ import { default as Emitter } from "events";
 import Middleware from "./Middleware";
 import Manager from "./Manager";
 import Module from "./Module";
-import Features from "./Features";
 import Parcel, { ParcelProps } from "./Parcel";
 import { SetState } from "./Store";
-export default class Dispatcher<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> {
+type TStateType<TStates> = { [K in keyof TStates]: TStates[K] };
+export default class Dispatcher<TKeys, TStates, TFeatures> {
 
     private eventEmitter: Emitter;
-    private parcel?: Parcel<TKeys, TStates, TFeatures>;
+    private parcel?: Parcel<TKeys, TStateType<TStates>, TFeatures>;
 
-    listen = <TStateType = any>(key: TKeys, callbackfn: (item: Parcel<TKeys, TStateType, TFeatures>) => void) => {
+    listen = (key: TKeys, callbackfn: (item: Parcel<TKeys, TStateType<TStates>, TFeatures>) => void) => {
         this.eventEmitter.on(key, () => {
             if (this.parcel) {
                 callbackfn(this.parcel)
@@ -25,14 +25,14 @@ export default class Dispatcher<TKeys = string, TStates = any, TFeatures = Featu
     stopListening = (key: TKeys) => {
         this.eventEmitter.removeListener(key, () => null);
     }
-    dispatch = <TStateType = any>(parcel: Parcel<TKeys, TStateType, TFeatures>) => {
+    dispatch = (parcel: Parcel<TKeys, TStateType<TStates>, TFeatures>) => {
         this.parcel = parcel;
         this.eventEmitter.emit(parcel.getKey());
     }
-    static createParcel = <TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>>(contents: ParcelProps<TKeys, TStateType, TFeatures>) => {
+    static createParcel = <TKeys, TStateType, TFeatures>(contents: ParcelProps<TKeys, TStateType, TFeatures>) => {
         return new Parcel(contents);
     }
-    static runMiddleware = <TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>>(parcel: Parcel<TKeys, TStateType, TFeatures>, setState: SetState<TKeys, TStateType>, modules: Manager<TKeys, Module<TKeys, TStateType, TFeatures>>) => {
+    static runMiddleware = <TKeys, TStateType, TFeatures>(parcel: Parcel<TKeys, TStateType, TFeatures>, setState: SetState<TKeys, TStateType>, modules: Manager<TKeys, Module<TKeys, TStateType, TFeatures>>) => {
         return new Middleware<TKeys, TStateType, TFeatures>(parcel, setState, modules);
     }
     public constructor() {

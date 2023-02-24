@@ -2,7 +2,7 @@ import Parcel from "./Parcel";
 import Features, { FeatureOnCallback, FeatureOnLoad, FeatureOnRun, FeatureOnTypeCheck } from "./Features";
 import { SetState } from "./Store";
 
-export interface ModuleProps<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> {
+export interface ModuleProps<TKeys, TStates, TFeatures> {
     name: TKeys,
     onTypeCheck?: FeatureOnTypeCheck<TKeys, TStates, TFeatures>;
     onLoad?: FeatureOnLoad<TKeys, TStates, TFeatures>;
@@ -10,7 +10,7 @@ export interface ModuleProps<TKeys = string, TStates = any, TFeatures = Features
     onCallback?: FeatureOnCallback<TKeys, TStates, TFeatures>;
 }
 
-export default class Module<TKeys = string, TStates = any, TFeatures = Features<TKeys, TStates>> {
+export default class Module<TKeys, TStates, TFeatures> {
 
     private name: TKeys;
     private featureOnTypeCheck?: FeatureOnTypeCheck<TKeys, TStates, TFeatures>;

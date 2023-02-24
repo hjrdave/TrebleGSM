@@ -3,12 +3,11 @@
  * This class hold data necessary for updating state and running middleware.
  */
 import { Types } from "./TypeGuard";
-import Features from "./Features";
 import Manager from "./Manager";
 import Error, { ErrorCodes } from "./Error";
 
 type FailReason = { code: ErrorCodes, msg: string };
-export interface ParcelProps<TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>> {
+export interface ParcelProps<TKeys, TStateType, TFeatures> {
     key: TKeys,
     type?: keyof typeof Types;
     dispatchState?: TStateType;
@@ -17,7 +16,7 @@ export interface ParcelProps<TKeys = string, TStateType = any, TFeatures = Featu
     features?: TFeatures;
 }
 
-export default class Parcel<TKeys = string, TStateType = any, TFeatures = Features<TKeys, TStateType>> {
+export default class Parcel<TKeys, TStateType, TFeatures> {
 
     private key: TKeys;
     private type?: keyof typeof Types;
