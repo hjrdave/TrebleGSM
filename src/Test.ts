@@ -8,7 +8,7 @@ const Store = TrebleGSM.Store<IState, TrebleGSM.Features<IState, any>>();
 Store.addItem({
     type: 'string',
     key: 'name',
-    state: 50,
+    state: 'Bob',
     features: {
         onLoad: (parcel, setState) => {
             const state = parcel.getNextState();

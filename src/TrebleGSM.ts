@@ -4,11 +4,8 @@ import { ParcelProps as IParcelProps } from "./Parcel";
 import { ModuleProps as IModuleProps } from "./Module";
 import { StoreItemProps as IStoreItemProps } from "./Store";
 import Features, { default as IFeatures, FeatureOnCallback, FeatureOnRun, FeatureOnLoad } from "./Features";
-import { SetState as ISetState } from "./Store";
+import { SetState as ISetState, TKeys, TStates } from "./Store";
 
-type StateValues<IState> = {
-    [K in keyof IState]: IState[K];
-};
 namespace TrebleGSM {
 
     export function Store<IState, TFeatures extends Features<IState, TFeatures>>() {
@@ -16,7 +13,7 @@ namespace TrebleGSM {
     }
     export type StoreInstance<IState, TFeatures extends Features<IState, TFeatures>> = IStoreInstance<IState, TFeatures>;
     export interface Features<IState, TFeatures extends Features<IState, TFeatures>> extends IFeatures<IState, TFeatures> { };
-    export interface StoreItemProps<IState, TFeatures extends Features<IState, TFeatures>> extends IStoreItemProps<IState, TFeatures> { };
+    export interface StoreItemProps<IState, TFeatures extends Features<IState, TFeatures>> extends IStoreItemProps<TKeys<IState>, TStates<IState>, TFeatures> { };
     export interface ParcelProps<IState, TFeatures extends Features<IState, TFeatures>> extends IParcelProps<IState, TFeatures> { };
     export interface ModuleProps<IState, TFeatures extends Features<IState, TFeatures>> extends IModuleProps<IState, TFeatures> { };
     export type OnLoad<IState, TFeatures extends Features<IState, TFeatures>> = FeatureOnLoad<IState, TFeatures>;

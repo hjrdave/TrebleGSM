@@ -9,9 +9,9 @@ import Module from "./Module";
 export type TKeys<IState> = keyof IState;
 //export type TStates<IState> = { [K in keyof IState]: IState[K]; }
 export type TStates<IState> = IState[TKeys<IState>];
-export interface StoreItemProps<IState, TFeatures extends Features<IState, TFeatures>> {
-    key: TKeys<IState>;
-    state?: TStates<IState>;
+export interface StoreItemProps<TKeys, TState, TFeatures> {
+    key: TKeys;
+    state?: TState;
     type?: keyof typeof Types;
     features?: TFeatures;
 }
@@ -41,7 +41,7 @@ export default class Store<IState, TFeatures extends Features<IState, TFeatures>
         }))
     )
 
-    addItem = ({ key, state, type, features }: StoreItemProps<IState, TFeatures>) => {
+    addItem = ({ key, state, type, features }: StoreItemProps<TKeys<IState>, TStates<IState>, TFeatures>) => {
         const parcel = this.createParcel({
             key: key,
             type: type,
