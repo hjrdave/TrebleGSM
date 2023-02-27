@@ -1,13 +1,16 @@
 import TrebleGSM from "./TrebleGSM";
-
-const Store = TrebleGSM.Store();
+interface IState {
+    name: string;
+    age: number;
+}
+const Store = TrebleGSM.Store<IState, TrebleGSM.Features<IState, any>>();
 
 Store.addItem({
     type: 'string',
     key: 'name',
-    state: 'Bob',
+    state: 50,
     features: {
-        onLoad: (parcel) => {
+        onLoad: (parcel, setState) => {
             const state = parcel.getNextState();
             const key = parcel.getKey();
             console.log(`State "${key}: ${state}" was added to Store`);
@@ -21,5 +24,11 @@ Store.addItem({
         }
     }
 });
-Store.setState('name', 'bobby');
+Store.addItem({
+    type: 'number',
+    key: 'age',
+    state: 54
+});
+
+Store.setState<string>('name', (prevState) => prevState);
 Store.setState('name', 'bobby2');

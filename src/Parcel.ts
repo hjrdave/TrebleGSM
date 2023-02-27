@@ -6,25 +6,25 @@ import { Types } from "./TypeGuard";
 import Manager from "./Manager";
 import Error, { ErrorCodes } from "./Error";
 import Features from "./Features";
+import { TKeys, TStates } from "./Store";
 
-export type TStateType<TStates> = { [K in keyof TStates]: TStates[K] };
 type FailReason = { code: ErrorCodes, msg: string };
-export interface ParcelProps<TKeys, TStates, TFeatures extends Features<TKeys, TStates, TFeatures>> {
-    key: TKeys,
+export interface ParcelProps<IState, TFeatures extends Features<IState, TFeatures>> {
+    key: TKeys<IState>,
     type?: keyof typeof Types;
-    dispatchState?: TStates;
-    prevState?: TStates;
-    nextState?: TStates;
+    dispatchState?: TStates<IState>;
+    prevState?: TStates<IState>;
+    nextState?: TStates<IState>;
     features?: TFeatures;
 }
 
-export default class Parcel<TKeys, TStates, TFeatures extends Features<TKeys, TStates, TFeatures>> {
+export default class Parcel<IState, TFeatures extends Features<IState, TFeatures>> {
 
-    private key: TKeys;
+    private key: TKeys<IState>;
     private type?: keyof typeof Types;
-    private prevState?: TStates;
-    private dispatchState?: TStates;
-    private nextState?: TStates;
+    private prevState?: TStates<IState>;
+    private dispatchState?: TStates<IState>;
+    private nextState?: TStates<IState>;
     private features?: TFeatures;
     private failReasons: Manager<ErrorCodes, FailReason>;
     private isInitialDispatch = false;
@@ -65,7 +65,7 @@ export default class Parcel<TKeys, TStates, TFeatures extends Features<TKeys, TS
     getNextState() {
         return this.nextState;
     }
-    setNextState(nextState: TStates) {
+    setNextState(nextState: TStates<IState>) {
         this.nextState = nextState;
     }
     getFeatures() {
@@ -75,7 +75,7 @@ export default class Parcel<TKeys, TStates, TFeatures extends Features<TKeys, TS
         return this.doesPass;
     }
 
-    public constructor(item: ParcelProps<TKeys, TStates, TFeatures>) {
+    public constructor(item: ParcelProps<IState, TFeatures>) {
         this.key = item.key;
         this.type = item.type;
         this.prevState = item.prevState;

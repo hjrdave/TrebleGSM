@@ -1,39 +1,39 @@
 import Parcel from "./Parcel";
 import Features, { FeatureOnCallback, FeatureOnLoad, FeatureOnRun, FeatureOnTypeCheck } from "./Features";
-import { SetState } from "./Store";
+import { SetState, TKeys } from "./Store";
 
-export interface ModuleProps<TKeys, TStates, TFeatures extends Features<TKeys, TStates, TFeatures>> {
-    name: TKeys,
-    onTypeCheck?: FeatureOnTypeCheck<TKeys, TStates, TFeatures>;
-    onLoad?: FeatureOnLoad<TKeys, TStates, TFeatures>;
-    onRun?: FeatureOnRun<TKeys, TStates, TFeatures>;
-    onCallback?: FeatureOnCallback<TKeys, TStates, TFeatures>;
+export interface ModuleProps<IState, TFeatures extends Features<IState, TFeatures>> {
+    name: TKeys<IState>,
+    onTypeCheck?: FeatureOnTypeCheck<IState, TFeatures>;
+    onLoad?: FeatureOnLoad<IState, TFeatures>;
+    onRun?: FeatureOnRun<IState, TFeatures>;
+    onCallback?: FeatureOnCallback<IState, TFeatures>;
 }
 
-export default class Module<TKeys, TStates, TFeatures extends Features<TKeys, TStates, TFeatures>> {
+export default class Module<IState, TFeatures extends Features<IState, TFeatures>> {
 
-    private name: TKeys;
-    private featureOnTypeCheck?: FeatureOnTypeCheck<TKeys, TStates, TFeatures>;
-    private featureOnLoad?: FeatureOnLoad<TKeys, TStates, TFeatures>;
-    private featureOnRun?: FeatureOnRun<TKeys, TStates, TFeatures>;
-    private featureOnCallback?: FeatureOnCallback<TKeys, TStates, TFeatures>;
+    private name: TKeys<IState>;
+    private featureOnTypeCheck?: FeatureOnTypeCheck<IState, TFeatures>;
+    private featureOnLoad?: FeatureOnLoad<IState, TFeatures>;
+    private featureOnRun?: FeatureOnRun<IState, TFeatures>;
+    private featureOnCallback?: FeatureOnCallback<IState, TFeatures>;
 
     getName = () => {
         return this.name;
     }
-    onTypeCheck = (parcel: Parcel<TKeys, TStates, TFeatures>) => {
+    onTypeCheck = (parcel: Parcel<IState, TFeatures>) => {
         return this.featureOnTypeCheck?.(parcel) ?? true;
     }
-    onLoad = (parcel: Parcel<TKeys, TStates, TFeatures>, setState: SetState<TKeys, TStates>) => {
+    onLoad = (parcel: Parcel<IState, TFeatures>, setState: SetState<IState>) => {
         this.featureOnLoad?.(parcel, setState);
     }
-    onRun = (parcel: Parcel<TKeys, TStates, TFeatures>) => {
+    onRun = (parcel: Parcel<IState, TFeatures>) => {
         this.featureOnRun?.(parcel);
     }
-    onCallback = (parcel: Parcel<TKeys, TStates, TFeatures>, setState: SetState<TKeys, TStates>) => {
+    onCallback = (parcel: Parcel<IState, TFeatures>, setState: SetState<IState>) => {
         this.featureOnCallback?.(parcel, setState);
     }
-    public constructor(props: ModuleProps<TKeys, TStates, TFeatures>) {
+    public constructor(props: ModuleProps<IState, TFeatures>) {
         this.name = props.name;
         this.featureOnTypeCheck = props.onTypeCheck;
         this.featureOnLoad = props.onLoad;

@@ -10,31 +10,32 @@ import Module from "./Module";
 import Parcel, { ParcelProps } from "./Parcel";
 import Features from "./Features";
 import { SetState } from "./Store";
+import { TKeys } from "./Store";
 
-export default class Dispatcher<TKeys, TStates, TFeatures extends Features<TKeys, TStates, TFeatures>> {
+export default class Dispatcher<IState, TFeatures extends Features<IState, TFeatures>> {
 
     private eventEmitter: Emitter;
-    private parcel?: Parcel<TKeys, TStates, TFeatures>;
+    private parcel?: Parcel<IState, TFeatures>;
 
-    listen = (key: TKeys, callbackfn: (item: Parcel<TKeys, TStates, TFeatures>) => void) => {
+    listen = (key: TKeys<IState>, callbackfn: (item: Parcel<IState, TFeatures>) => void) => {
         this.eventEmitter.on(key as string, () => {
             if (this.parcel) {
                 callbackfn(this.parcel)
             }
         });
     }
-    stopListening = (key: TKeys) => {
+    stopListening = (key: TKeys<IState>) => {
         this.eventEmitter.removeListener(key as string, () => null);
     }
-    dispatch = (parcel: Parcel<TKeys, TStates, TFeatures>) => {
+    dispatch = (parcel: Parcel<IState, TFeatures>) => {
         this.parcel = parcel;
         this.eventEmitter.emit(parcel.getKey() as string);
     }
-    static createParcel = <TKeys, TState, TFeatures extends Features<TKeys, TState, TFeatures>>(contents: ParcelProps<TKeys, TState, TFeatures>) => {
+    static createParcel = <IState, TFeatures extends Features<IState, TFeatures>>(contents: ParcelProps<IState, TFeatures>) => {
         return new Parcel(contents);
     }
-    static runMiddleware = <TKeys, TState, TFeatures extends Features<TKeys, TState, TFeatures>>(parcel: Parcel<TKeys, TState, TFeatures>, setState: SetState<TKeys, TState>, modules: Manager<TKeys, Module<TKeys, TState, TFeatures>>) => {
-        return new Middleware<TKeys, TState, TFeatures>(parcel, setState, modules);
+    static runMiddleware = <IState, TFeatures extends Features<IState, TFeatures>>(parcel: Parcel<IState, TFeatures>, setState: SetState<IState>, modules: Manager<TKeys<IState>, Module<IState, TFeatures>>) => {
+        return new Middleware<IState, TFeatures>(parcel, setState, modules);
     }
     public constructor() {
         this.eventEmitter = new Emitter();

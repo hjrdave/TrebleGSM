@@ -8,14 +8,14 @@ import Manager from "./Manager";
 import Module from "./Module";
 import RenderGuard from "./RenderGuard";
 import Features from "./Features";
-import { SetState } from "./Store";
+import { SetState, TKeys, TStates } from "./Store";
 
-export default class Middleware<TKeys, TStates, TFeatures extends Features<TKeys, TStates, TFeatures>>{
+export default class Middleware<IState, TFeatures extends Features<IState, TFeatures>>{
 
-    private parcel: Parcel<TKeys, TStates, TFeatures>;
+    private parcel: Parcel<IState, TFeatures>;
     private features?: TFeatures;
-    private modules?: Manager<TKeys, Module<TKeys, TStates, TFeatures>>;
-    private setState: SetState<TKeys, TStates>;
+    private modules?: Manager<TKeys<IState>, Module<IState, TFeatures>>;
+    private setState: SetState<IState>;
 
     private runModules = (type: 'onLoad' | 'onRun' | 'onCallback') => {
         this.modules?.forEach((module) => {
@@ -61,7 +61,7 @@ export default class Middleware<TKeys, TStates, TFeatures extends Features<TKeys
         this.runFeatures('onCallback');
     }
 
-    public constructor(parcel: Parcel<TKeys, TStates, TFeatures>, setState: SetState<TKeys, TStates>, modules: Manager<TKeys, Module<TKeys, TStates, TFeatures>>) {
+    public constructor(parcel: Parcel<IState, TFeatures>, setState: SetState<IState>, modules: Manager<TKeys<IState>, Module<IState, TFeatures>>) {
         this.parcel = parcel;
         this.modules = modules;
         this.features = parcel.getFeatures();

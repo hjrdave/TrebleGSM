@@ -1,17 +1,18 @@
 import Parcel from "./Parcel";
 import { SetState } from "./Store";
+import { TKeys, TStates } from "./Store";
 
-export type FeatureOnTypeCheck<TKeys, TState, TFeatures extends Features<TKeys, TState, TFeatures>> = (parcel: Parcel<TKeys, TState, TFeatures>) => boolean;
+export type FeatureOnTypeCheck<IState, TFeatures extends Features<IState, TFeatures>> = (parcel: Parcel<IState, TFeatures>) => boolean;
 
-export type FeatureOnLoad<TKeys, TState, TFeatures extends Features<TKeys, TState, TFeatures>> = (parcel: Parcel<TKeys, TState, TFeatures>, setState: SetState<TKeys, TState>) => void;
+export type FeatureOnLoad<IState, TFeatures extends Features<IState, TFeatures>> = (parcel: Parcel<IState, TFeatures>, setState: SetState<IState>) => void;
 
-export type FeatureOnRun<TKeys, TState, TFeatures extends Features<TKeys, TState, TFeatures>> = (parcel: Parcel<TKeys, TState, TFeatures>) => void;
+export type FeatureOnRun<IState, TFeatures extends Features<IState, TFeatures>> = (parcel: Parcel<IState, TFeatures>) => void;
 
-export type FeatureOnCallback<TKeys, TState, TFeatures extends Features<TKeys, TState, TFeatures>> = (parcel: Parcel<TKeys, TState, TFeatures>, setState: SetState<TKeys, TState>) => void;
+export type FeatureOnCallback<IState, TFeatures extends Features<IState, TFeatures>> = (parcel: Parcel<IState, TFeatures>, setState: SetState<IState>) => void;
 
-export default interface Features<TKeys, TState, TFeatures extends Features<TKeys, TState, TFeatures>> {
-    onTypeCheck?: FeatureOnTypeCheck<TKeys, TState, TFeatures>
-    onLoad?: FeatureOnLoad<TKeys, TState, TFeatures>;
-    onRun?: FeatureOnRun<TKeys, TState, TFeatures>;
-    onCallback?: FeatureOnCallback<TKeys, TState, TFeatures>;
+export default interface Features<IState, TFeatures extends Features<IState, TFeatures>> {
+    onTypeCheck?: FeatureOnTypeCheck<IState, TFeatures>
+    onLoad?: FeatureOnLoad<IState, TFeatures>;
+    onRun?: FeatureOnRun<IState, TFeatures>;
+    onCallback?: FeatureOnCallback<IState, TFeatures>;
 }
