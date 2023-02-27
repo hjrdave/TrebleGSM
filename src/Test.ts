@@ -10,16 +10,21 @@ Store.addItem({
     key: 'name',
     state: 'Bob',
     features: {
-        onLoad: (parcel, setState) => {
+        onLoad: (parcel) => {
             const state = parcel.getNextState();
             const key = parcel.getKey();
             console.log(`State "${key}: ${state}" was added to Store`);
         },
         onCallback: (parcel) => {
             if (!parcel.getIsInitialDispatch()) {
-                const state = parcel.getNextState();
-                const key = parcel.getKey();
-                console.log(`State "${key}" was updated to "${state}"`);
+
+                if (parcel.doesItemPass()) {
+                    const state = parcel.getNextState();
+                    const key = parcel.getKey();
+                    console.log(`State "${key}" was updated to "${state}"`);
+                    return
+                }
+                console.log(parcel.getAllFailReasons());
             }
         }
     }
@@ -30,5 +35,6 @@ Store.addItem({
     state: 54
 });
 
-Store.setState<string>('name', (prevState) => prevState);
+Store.setState<string>('name', 'bobby1');
+Store.setState('name', 'bobby2');
 Store.setState('name', 'bobby2');
