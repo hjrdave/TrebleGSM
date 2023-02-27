@@ -28,10 +28,17 @@ export default class Store<IState, TFeatures extends Features<IState, TFeatures>
         return Dispatcher.createParcel(parcel);
     }
 
+    /**
+     * Adds TrebleGSM Module to Store.
+     * @param module - imported module.
+     */
     use = (module: Module<IState, TFeatures>) => {
         this.moduleManager.add(module.getName(), module);
     }
 
+    /**
+     * Outputs all Store Items as an object array.
+     */
     getItems = () => (
         this.stateManager.getAll().map((item) => ({
             key: item[0],
@@ -41,6 +48,13 @@ export default class Store<IState, TFeatures extends Features<IState, TFeatures>
         }))
     )
 
+    /**
+     * Adds new Store Item to Store.
+     * @param key - Sets state name.
+     * @param state - Initial state.
+     * @param type - Explicitly sets type of state.
+     * @param features - Used to set middleware.
+     */
     addItem = ({ key, state, type, features }: StoreItemProps<TKeys<IState>, TStates<IState>, TFeatures>) => {
         const parcel = this.createParcel({
             key: key,
@@ -62,10 +76,19 @@ export default class Store<IState, TFeatures extends Features<IState, TFeatures>
         middleware.onCallback();
     }
 
+    /**
+     * Gets state by key.
+     * @param key - name of state.
+     */
     getState = <TState>(key: TKeys<IState>) => {
         return this.stateManager.get(key) as TState;
     };
 
+    /**
+     * Sets a new state in Store.
+     * @param key - name of state.
+     * @param state - name of state.
+     */
     setState = <TState extends TStates<IState>>(key: TKeys<IState>, state: TState | ((prevState: TState) => TState)): void => {
         if (this.stateManager.has(key)) {
             //This is what immur will process
@@ -94,6 +117,10 @@ export default class Store<IState, TFeatures extends Features<IState, TFeatures>
         }
     };
 
+    /**
+     * Runs a callback anytime state is updated.
+     * @param callbackfn - Function that fires whenever state is updated in the Store.
+     */
     onDispatch = (callbackfn: (parcel: Parcel<IState, TFeatures>) => void) => {
         this.stateManager.forEach((_, key) => this.dispatcher.stopListening(key));
         this.stateManager.forEach((_, key) => this.dispatcher.listen(key, callbackfn));
