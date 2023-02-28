@@ -8,7 +8,7 @@ import Manager from "./Manager";
 import Module from "./Module";
 import RenderGuard from "./RenderGuard";
 import Features from "./Features";
-import { SetState, TKeys, TStates } from "./Store";
+import { SetState, TKeys } from "./Store";
 
 export default class Middleware<IState, TFeatures extends Features<IState, TFeatures>>{
 

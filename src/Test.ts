@@ -5,10 +5,10 @@ interface IState {
 }
 const Store = TrebleGSM.Store<IState, TrebleGSM.Features<IState, any>>();
 
-Store.addItem({
+Store.addItem<string>({
     type: 'string',
     key: 'name',
-    state: 'Bob',
+    state: "Bob",
     features: {
         onLoad: (parcel) => {
             const state = parcel.getNextState();
@@ -29,7 +29,7 @@ Store.addItem({
         }
     }
 });
-Store.addItem({
+Store.addItem<number>({
     type: 'number',
     key: 'age',
     state: 54

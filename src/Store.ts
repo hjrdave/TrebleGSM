@@ -54,7 +54,7 @@ export default class Store<IState, TFeatures extends Features<IState, TFeatures>
      * @param type - Explicitly sets type of state.
      * @param features - Used to set middleware.
      */
-    addItem = ({ key, state, type, features }: StoreItemProps<TKeys<IState>, TStates<IState>, TFeatures>) => {
+    addItem = <TState extends TStates<IState>>({ key, state, type, features }: StoreItemProps<TKeys<IState>, TState, TFeatures>) => {
         const parcel = this.createParcel({
             key: key,
             type: type,
