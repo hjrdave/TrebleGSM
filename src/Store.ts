@@ -7,7 +7,6 @@ import Features from "./Features";
 import Module from "./Module";
 
 export type TKeys<IState> = keyof IState;
-//export type TStates<IState> = { [K in keyof IState]: IState[K]; }
 export type TStates<IState> = IState[TKeys<IState>];
 export interface StoreItemProps<TKeys, TState, TFeatures> {
     key: TKeys;
