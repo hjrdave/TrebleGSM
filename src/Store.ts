@@ -90,9 +90,7 @@ export default class Store<IState, TFeatures extends Features<IState, TFeatures>
      */
     setState = <TState extends TStates<IState>>(key: TKeys<IState>, state: TState | ((prevState: TState) => TState)): void => {
         if (this.stateManager.has(key)) {
-            //This is what immur will process
-            const _state = (typeof state === 'function') ? (state as (prevState: TState) => TState)(this.getState(key) as TState) as TState : state as TState;
-            //
+            const _state = (typeof state === 'function') ? (state as (prevState: TState) => TState)(this.getState<TState>(key)) : state;
             const parcel = this.createParcel({
                 key: key,
                 type: this.typeManager.get(key),
@@ -115,6 +113,22 @@ export default class Store<IState, TFeatures extends Features<IState, TFeatures>
             error.throwConsoleError();
         }
     };
+
+    dispatch = <TProps>(props: TProps & { key: TKeys<IState> }) => {
+        const parcel = this.createParcel({
+            key: props.key,
+            type: this.typeManager.get(props.key),
+            prevState: this.getState(props.key),
+            dispatchState: this.getState(props.key),
+            nextState: this.getState(props.key),
+            features: this.featureManager.get(props.key),
+            dispatchProps: props
+        });
+        const middleware = Dispatcher.runMiddleware(parcel, this.setState, this.moduleManager);
+        middleware.onRun();
+        this.dispatcher.dispatch(parcel);
+        this.stateManager.update(parcel.getKey(), parcel.getNextState());
+    }
 
     /**
      * Runs a callback anytime state is updated.

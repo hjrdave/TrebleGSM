@@ -9,13 +9,14 @@ import Features from "./Features";
 import { TKeys, TStates } from "./Store";
 
 type FailReason = { code: ErrorCodes, msg: string };
-export interface ParcelProps<IState, TFeatures extends Features<IState, TFeatures>> {
+export interface ParcelProps<IState, TFeatures extends Features<IState, TFeatures>, TDispatchProps = any> {
     key: TKeys<IState>,
     type?: keyof typeof Types;
     dispatchState?: TStates<IState>;
     prevState?: TStates<IState>;
     nextState?: TStates<IState>;
     features?: TFeatures;
+    dispatchProps?: TDispatchProps;
 }
 
 export default class Parcel<IState, TFeatures extends Features<IState, TFeatures>> {
