@@ -7,7 +7,7 @@ import Inventory from "./Inventory";
 
 export default class Manager<TKeys, TValue> {
 
-    private inventory: Inventory<TKeys, TValue>;
+    private inventory = new Inventory<TKeys, TValue>();
 
     get = (key: TKeys) => {
         if (this.inventory.has(key)) {
@@ -56,10 +56,6 @@ export default class Manager<TKeys, TValue> {
 
     forEach = (predicateFN: (value: TValue, key: TKeys) => void) => {
         this.inventory.forEach(predicateFN);
-    }
-
-    public constructor() {
-        this.inventory = new Inventory<TKeys, TValue>();
     }
 };
 

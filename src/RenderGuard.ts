@@ -3,15 +3,15 @@ export default class RenderGuard {
 
     //primitive compare
     public static isEquals = (value: any, value2: any) => {
-        return value !== value2;
+        return value === value2;
     }
 
-    //compares two arrays to see if they are equal (works even if item order is different)
-    public static compareArrays = (arr: any[], arr2: any[]) => {
+    //compares two arrays to see if they are equal (works even if item order is different) (does shallow compare for object arrays)
+    public static compareArrays = (arr: any[], arr2: any[]): boolean => {
         if (arr.length !== arr2.length) return false;
 
-        const aSorted = arr.slice().sort();
-        const bSorted = arr2.slice().sort();
+        const aSorted = arr.map((el) => JSON.stringify(el)).sort();
+        const bSorted = arr2.map((el) => JSON.stringify(el)).sort();
 
         for (let i = 0; i < aSorted.length; i++) {
             if (aSorted[i] !== bSorted[i]) return false;
@@ -19,6 +19,7 @@ export default class RenderGuard {
 
         return true;
     }
+
 
     //does a shallow compare of two objects and their properties
     public static shallowCompare = (obj1: { [key: string]: any }, obj2: { [key: string]: any }) => {
@@ -61,7 +62,7 @@ export default class RenderGuard {
             [Types.object]: () => (RenderGuard.shallowCompare(value, value2)),
             [Types.deepObject]: () => (RenderGuard.deepCompare(value, value2)),
             [Types.array]: () => (RenderGuard.compareArrays(value, value2)),
-            'default': () => (RenderGuard.isEquals(value, value2))
+            'default': () => (!RenderGuard.isEquals(value, value2))
         }
         if (type !== undefined) {
             return (type === Types.object || type === Types.deepObject || type === Types.array) ? Guards[type]() : Guards['default']();

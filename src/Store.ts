@@ -89,7 +89,9 @@ export default class Store<IState, TFeatures extends Features<IState, TFeatures>
      * @param state - name of state.
      */
     setState = <TState extends TStates<IState>>(key: TKeys<IState>, state: TState | ((prevState: TState) => TState)): void => {
+
         if (this.stateManager.has(key)) {
+
             const _state = (typeof state === 'function') ? (state as (prevState: TState) => TState)(this.getState<TState>(key)) : state;
             const parcel = this.createParcel({
                 key: key,
@@ -99,6 +101,7 @@ export default class Store<IState, TFeatures extends Features<IState, TFeatures>
                 nextState: _state,
                 features: this.featureManager.get(key)
             });
+
             const middleware = Dispatcher.runMiddleware(parcel, this.setState, this.moduleManager);
             (middleware.onTypeCheck()) ? null : parcel.addFailReason(ErrorCodes.WrongType);
             (middleware.shouldParcelRerender()) ? null : parcel.addFailReason(ErrorCodes.StateDidNotChange);

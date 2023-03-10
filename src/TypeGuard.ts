@@ -10,7 +10,7 @@ export enum Types {
 export default class TypeGuard {
 
     public static isNumber = (value: any) => {
-        return typeof value === Types.number;
+        return typeof value === Types.number && !isNaN(value);
     }
 
     public static isString = (value: any) => {

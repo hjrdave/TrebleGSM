@@ -3,30 +3,39 @@
  * This is an extension of the JS Map class. It allows for Map functions to be typed easier.
  * It is the base data structure for Store state
  */
-export default class Inventory<TKeys, TValues> extends Map {
+export default class Inventory<TKeys, TValues>{
+    private map: Map<TKeys, TValues>;
+    public size: number;
     delete(key: TKeys) {
-        return super.delete(key);
+        return this.map.delete(key);
     }
     set(key: TKeys, value?: TValues) {
-        return super.set(key, value);
+        this.map.set(key, value as TValues);
     }
     get(key: TKeys) {
-        return super.get(key) as TValues;
+        return this.map.get(key);
     }
     entries() {
-        return super.entries() as IterableIterator<[TKeys, TValues]>
+        return this.map.entries()
     }
     forEach(callbackfn: (value: TValues, key: TKeys, map: Map<TKeys, TValues>) => void, thisArg?: any): void {
-        return super.forEach(callbackfn, thisArg);
+        this.map.forEach(callbackfn, thisArg);
     }
     has(key: TKeys) {
-        return super.has(key);
+        return this.map.has(key);
     }
     keys() {
-        return super.keys() as IterableIterator<TKeys>
+        return this.map.keys()
     }
     values() {
-        return super.values() as IterableIterator<TValues>;
+        return this.map.values();
+    }
+    clear() {
+        this.map.clear();
+    }
+    public constructor(iterable?: Iterable<readonly [TKeys, TValues]> | null | undefined) {
+        this.map = new Map<TKeys, TValues>(iterable);
+        this.size = this.map.size;
     }
 };
 
