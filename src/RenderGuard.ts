@@ -59,9 +59,9 @@ export default class RenderGuard {
 
     public static stateCanRender = (value?: any, value2?: any, type?: keyof typeof Types) => {
         const Guards = {
-            [Types.object]: () => (RenderGuard.shallowCompare(value, value2)),
-            [Types.deepObject]: () => (RenderGuard.deepCompare(value, value2)),
-            [Types.array]: () => (RenderGuard.compareArrays(value, value2)),
+            [Types.object]: () => (!RenderGuard.shallowCompare(value, value2)),
+            [Types.deepObject]: () => (!RenderGuard.deepCompare(value, value2)),
+            [Types.array]: () => (!RenderGuard.compareArrays(value, value2)),
             'default': () => (!RenderGuard.isEquals(value, value2))
         }
         if (type !== undefined) {
